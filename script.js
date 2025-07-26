@@ -206,7 +206,7 @@ function initializeEmailJS() {
         console.log('📧 EmailJS not configured - using placeholder config');
         return;
     }
-    
+
     try {
         // Initialize EmailJS with public key
         emailjs.init(EMAILJS_CONFIG.publicKey);
@@ -811,7 +811,7 @@ function updateOrderHistoryPage() {
                                     ID: ${order.serviceId}<br>${order.serviceName}
                                 </div>
                             </div>
-                            
+
                             <div class="order-detail-section">
                                 <div class="order-detail-label">
                                     <i class="fas fa-chart-bar"></i> Quantity Ordered
@@ -2110,248 +2110,248 @@ function showUPIAppsModal(order) {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.8);
+        background: #f8f9fa;
         z-index: 10001;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
+        overflow-y: auto;
         animation: fadeIn 0.3s ease;
-        backdrop-filter: blur(5px);
     `;
 
     let timerInterval;
-    let timeLeft = 300; // 5 minutes
+    let timeLeft = 900; // 15 minutes
 
     upiModal.innerHTML = `
         <div style="
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 20px;
+            min-height: 100vh;
+            background: #f8f9fa;
+            padding: 0;
+            margin: 0;
             width: 100%;
-            max-width: 450px;
-            max-height: 95vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            border: 2px solid rgba(102, 126, 234, 0.2);
         ">
-            <!-- Header Section -->
+            <!-- Header with Logo -->
             <div style="
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 25px;
+                background: white;
+                padding: 15px 20px;
                 text-align: center;
-                border-radius: 18px 18px 0 0;
-                position: relative;
-                overflow: hidden;
+                border-bottom: 1px solid #e0e0e0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             ">
                 <div style="
-                    width: 60px;
-                    height: 60px;
-                    background: rgba(255,255,255,0.25);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 18px;
-                    font-size: 28px;
-                    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-                ">📱</div>
-                <h2 style="margin: 0 0 10px 0; font-size: 22px; font-weight: 700;">UPI Payment Gateway</h2>
-                <p style="margin: 0; font-size: 15px; opacity: 0.95;">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #28a745;
+                    margin-bottom: 4px;
+                ">India Social Panel</div>
                 <div style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-                    animation: shimmer 3s infinite;
-                "></div>
+                    font-size: 14px;
+                    color: #6c757d;
+                ">UPI Payment Gateway</div>
             </div>
 
-            <!-- Timer -->
+            <!-- Main Content -->
             <div style="
-                background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-                color: #856404;
-                padding: 12px 20px;
-                text-align: center;
-                font-size: 14px;
-                font-weight: 600;
-                border-bottom: 1px solid #f0c14b;
+                padding: 20px;
+                max-width: 400px;
+                margin: 0 auto;
             ">
-                ⏰ Session expires in: <span id="upiTimer" style="color: #b8860b; font-weight: 700;">05:00</span>
-            </div>
-
-            <!-- Content -->
-            <div style="padding: 30px;">
-                <h3 style="margin: 0 0 25px 0; color: #333; font-size: 18px; text-align: center; font-weight: 600;">🚀 Choose Your UPI App</h3>
-
-                <!-- UPI Apps Grid -->
+                <!-- Payment Title -->
                 <div style="
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 15px;
-                    margin-bottom: 30px;
-                ">
-                    <button onclick="openUPIApp('googlepay')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#4285f4'; this.style.background='linear-gradient(145deg, #f8f9ff 0%, #e8f0ff 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(66, 133, 244, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">📱</div>
-                        <span>Google Pay</span>
-                    </button>
-
-                    <button onclick="openUPIApp('phonepe')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#5f259f'; this.style.background='linear-gradient(145deg, #f8f5ff 0%, #e8e0ff 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(95, 37, 159, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">💜</div>
-                        <span>PhonePe</span>
-                    </button>
-
-                    <button onclick="openUPIApp('paytm')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#00baf2'; this.style.background='linear-gradient(145deg, #f0fbff 0%, #e0f7ff 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0, 186, 242, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">💙</div>
-                        <span>Paytm</span>
-                    </button>
-
-                    <button onclick="openUPIApp('amazonpay')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#ff9900'; this.style.background='linear-gradient(145deg, #fffbf0 0%, #fff0d9 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(255, 153, 0, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">🛒</div>
-                        <span>Amazon Pay</span>
-                    </button>
-
-                    <button onclick="openUPIApp('bhim')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#2e7d32'; this.style.background='linear-gradient(145deg, #f1f8f1 0%, #e8f5e8 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(46, 125, 50, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">🇮🇳</div>
-                        <span>BHIM UPI</span>
-                    </button>
-
-                    <button onclick="openUPIApp('other')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 2px solid #e9ecef;
-                        border-radius: 15px;
-                        padding: 20px 10px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-                        transition: all 0.3s ease;
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-                    " onmouseover="this.style.borderColor='#667eea'; this.style.background='linear-gradient(145deg, #f8f9ff 0%, #e8f0ff 100%)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
-                        <div style="font-size: 32px;">📱</div>
-                        <span>Any UPI App</span>
-                    </button>
-                </div>
-
-                <!-- Security Info -->
-                <div style="
-                    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
-                    border: 2px solid #28a745;
-                    border-radius: 12px;
-                    padding: 15px;
                     text-align: center;
                     margin-bottom: 25px;
-                    font-size: 14px;
-                    color: #155724;
-                    font-weight: 600;
                 ">
-                    🔒 Bank-Grade Security • SSL Encrypted • 100% Safe Payment
+                    <h2 style="
+                        margin: 0 0 8px 0;
+                        font-size: 18px;
+                        color: #495057;
+                        font-weight: 600;
+                    ">Choose Your UPI App</h2>
+                    <p style="
+                        margin: 0;
+                        font-size: 14px;
+                        color: #6c757d;
+                    ">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
+                </div>
+
+                <!-- Timer -->
+                <div style="
+                    background: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    border-left: 4px solid #ffc107;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #856404;
+                        margin-bottom: 5px;
+                    ">Session expires in</div>
+                    <div id="upiTimer" style="
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #856404;
+                        font-family: monospace;
+                    ">15:00</div>
+                    <div style="
+                        font-size: 12px;
+                        color: #856404;
+                        margin-top: 5px;
+                    ">mins</div>
+                </div>
+
+                <!-- UPI Apps Container -->
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    padding: 25px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                ">
+                    <h3 style="
+                        margin: 0 0 20px 0;
+                        color: #495057;
+                        font-size: 16px;
+                        font-weight: 600;
+                        text-align: center;
+                    ">Select UPI App</h3>
+
+                    <!-- UPI Apps Grid -->
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 15px;
+                        margin-bottom: 20px;
+                    ">
+                        <button onclick="openUPIApp('googlepay')" style="
+                            background: white;
+                            border: 2px solid #e0e0e0;
+                            border-radius: 10px;
+                            padding: 20px;
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 8px;
+                            transition: all 0.2s ease;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #495057;
+                        ">
+                            <div style="font-size: 24px;">📱</div>
+                            <span>Google Pay</span>
+                        </button>
+
+                        <button onclick="openUPIApp('phonepe')" style="
+                            background: white;
+                            border: 2px solid #e0e0e0;
+                            border-radius: 10px;
+                            padding: 20px;
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 8px;
+                            transition: all 0.2s ease;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #495057;
+                        ">
+                            <div style="font-size: 24px;">💜</div>
+                            <span>PhonePe</span>
+                        </button>
+
+                        <button onclick="openUPIApp('paytm')" style="
+                            background: white;
+                            border: 2px solid #e0e0e0;
+                            border-radius: 10px;
+                            padding: 20px;
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 8px;
+                            transition: all 0.2s ease;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #495057;
+                        ">
+                            <div style="font-size: 24px;">💙</div>
+                            <span>Paytm</span>
+                        </button>
+
+                        <button onclick="openUPIApp('other')" style="
+                            background: white;
+                            border: 2px solid #e0e0e0;
+                            border-radius: 10px;
+                            padding: 20px;
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 8px;
+                            transition: all 0.2s ease;
+                            font-size: 14px;
+                            font-weight: 600;
+                            color: #495057;
+                        ">
+                            <div style="font-size: 24px;">📱</div>
+                            <span>Any UPI App</span>
+                        </button>
+                </div>
+
+                </div>
+
+                <!-- Order Details -->
+                <div style="
+                    background: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #495057;
+                        margin-bottom: 10px;
+                        font-weight: 600;
+                    ">Payment Details</div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    ">
+                        <span style="color: #6c757d;">Order ID:</span>
+                        <span style="color: #495057; font-weight: 600;">${order.id}</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    ">
+                        <span style="color: #6c757d;">Amount:</span>
+                        <span style="color: #28a745; font-weight: 700; font-size: 16px;">₹${order.price.toFixed(2)}</span>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div style="display: flex; gap: 12px;">
+                <div style="
+                    display: flex;
+                    gap: 12px;
+                    padding-bottom: 20px;
+                ">
                     <button onclick="cancelTransaction()" style="
                         flex: 1;
-                        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                        background: #6c757d;
                         color: white;
                         border: none;
                         padding: 15px;
-                        border-radius: 12px;
+                        border-radius: 8px;
                         cursor: pointer;
                         font-weight: 600;
-                        font-size: 15px;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(108, 117, 125, 0.3)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                       Cancel Transaction
-                    </button>
+                        font-size: 14px;
+                    ">Cancel</button>
                 </div>
             </div>
         </div>
@@ -2426,7 +2426,7 @@ function showQRCodeModal(order) {
     `;
 
     let timerInterval;
-    let timeLeft = 300; // 5 minutes
+    let timeLeft = 900; // 15 minutes
 
     qrModal.innerHTML = `
         <div style="
@@ -2553,7 +2553,7 @@ function showQRCodeModal(order) {
                         font-weight: 700;
                         color: #856404;
                         font-family: monospace;
-                    ">05:00</div>
+                    ">15:00</div>
                     <div style="
                         font-size: 12px;
                         color: #856404;
@@ -2642,7 +2642,7 @@ function showQRCodeModal(order) {
     window.generateActualQRCode = function() {
         const qrContainer = document.getElementById('qrCodeContainer');
         const generateBtn = document.getElementById('generateQRBtn');
-        
+
         if (qrContainer && generateBtn) {
             const upiID = 'kavita.5049-49@waicici';
             const amount = order.price.toFixed(2);
@@ -2701,303 +2701,220 @@ function showUPIIDModal(order) {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.8);
+        background: #f8f9fa;
         z-index: 10001;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
+        overflow-y: auto;
         animation: fadeIn 0.3s ease;
-        backdrop-filter: blur(8px);
     `;
 
     let timerInterval;
-    let timeLeft = 300; // 5 minutes
+    let timeLeft = 900; // 15 minutes
     const actualUPIID = 'kavita.5049-49@waicici';
     const maskedUPIID = 'kavita.•••••••@waicici'; // Show only first part and bank
 
     upiIDModal.innerHTML = `
         <div style="
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 25px;
+            min-height: 100vh;
+            background: #f8f9fa;
+            padding: 0;
+            margin: 0;
             width: 100%;
-            max-width: 480px;
-            max-height: 95vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-            border: 3px solid transparent;
-            background-clip: padding-box;
-            position: relative;
         ">
-            <!-- Animated Border -->
+            <!-- Header with Logo -->
             <div style="
-                position: absolute;
-                top: -3px;
-                left: -3px;
-                right: -3px;
-                bottom: -3px;
-                background: linear-gradient(135deg, #4285f4 0%, #667eea 50%, #4285f4 100%);
-                border-radius: 25px;
-                z-index: -1;
-                animation: borderGlow 3s ease-in-out infinite;
-            "></div>
-
-            <!-- Header Section -->
-            <div style="
-                background: linear-gradient(135deg, #4285f4 0%, #667eea 100%);
-                color: white;
-                padding: 30px;
+                background: white;
+                padding: 15px 20px;
                 text-align: center;
-                border-radius: 22px 22px 0 0;
-                position: relative;
-                overflow: hidden;
+                border-bottom: 1px solid #e0e0e0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             ">
                 <div style="
-                    width: 70px;
-                    height: 70px;
-                    background: rgba(255,255,255,0.25);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 20px;
-                    font-size: 32px;
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-                    animation: upiIconFloat 3s ease-in-out infinite;
-                ">💳</div>
-                <h2 style="margin: 0 0 12px 0; font-size: 24px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">UPI ID Payment</h2>
-                <p style="margin: 0; font-size: 16px; opacity: 0.95;">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #28a745;
+                    margin-bottom: 4px;
+                ">India Social Panel</div>
                 <div style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                    animation: shimmer 2s infinite;
-                "></div>
+                    font-size: 14px;
+                    color: #6c757d;
+                ">UPI ID Payment Gateway</div>
             </div>
 
-            <!-- Timer -->
+            <!-- Main Content -->
             <div style="
-                background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-                color: #856404;
-                padding: 12px 25px;
-                text-align: center;
-                font-size: 15px;
-                font-weight: 600;
-                border-bottom: 2px solid #f0c14b;
+                padding: 20px;
+                max-width: 400px;
+                margin: 0 auto;
             ">
-                ⏰ Session expires in: <span id="upiIdTimer" style="color: #b8860b; font-weight: 700; font-size: 16px;">05:00</span>
-            </div>
-
-            <!-- Content -->
-            <div style="padding: 35px;">
-                <!-- UPI ID Section -->
+                <!-- Payment Title -->
                 <div style="
-                    background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
-                    border-radius: 20px;
-                    padding: 25px;
                     text-align: center;
                     margin-bottom: 25px;
-                    border: 3px solid #e9ecef;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                ">
+                    <h2 style="
+                        margin: 0 0 8px 0;
+                        font-size: 18px;
+                        color: #495057;
+                        font-weight: 600;
+                    ">Pay using UPI ID</h2>
+                    <p style="
+                        margin: 0;
+                        font-size: 14px;
+                        color: #6c757d;
+                    ">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
+                </div>
+
+                <!-- Timer -->
+                <div style="
+                    background: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    border-left: 4px solid #ffc107;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #856404;
+                        margin-bottom: 5px;
+                    ">Session expires in</div>
+                    <div id="upiIdTimer" style="
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #856404;
+                        font-family: monospace;
+                    ">15:00</div>
+                    <div style="
+                        font-size: 12px;
+                        color: #856404;
+                        margin-top: 5px;
+                    ">mins</div>
+                </div>
+
+                <!-- UPI ID Container -->
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    padding: 25px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 ">
                     <h3 style="
-                        color: #333; 
-                        margin-bottom: 20px; 
-                        font-size: 18px;
+                        margin: 0 0 20px 0;
+                        color: #495057;
+                        font-size: 16px;
                         font-weight: 600;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 10px;
-                    ">💳 Our UPI ID</h3>
+                        text-align: center;
+                    ">Our UPI ID</h3>
 
-                    <!-- UPI ID Display with Masked View -->
+                    <!-- UPI ID Display -->
                     <div style="
-                        background: white;
+                        background: #f8f9fa;
+                        border: 2px dashed #dee2e6;
+                        border-radius: 8px;
                         padding: 20px;
-                        border-radius: 15px;
-                        border: 3px solid #4285f4;
                         margin-bottom: 20px;
-                        position: relative;
-                        overflow: hidden;
+                        text-align: center;
                     ">
-                        <div style="
-                            position: absolute;
-                            top: 0;
-                            left: 0;
-                            right: 0;
-                            height: 3px;
-                            background: linear-gradient(90deg, #4285f4, #667eea, #4285f4);
-                            animation: borderGlow 2s infinite;
-                        "></div>
-
-                        <div style="
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            flex-wrap: wrap;
-                            gap: 15px;
-                        ">
-                            <div style="text-align: left; flex: 1; min-width: 200px;">
-                                <div id="displayedUPIID" style="
-                                    font-size: 18px; 
-                                    font-weight: 700; 
-                                    color: #4285f4; 
-                                    margin-bottom: 5px; 
-                                    word-break: break-all;
-                                    font-family: 'Courier New', monospace;
-                                ">${maskedUPIID}</div>
-                                <div style="
-                                    font-size: 12px; 
-                                    color: #666;
-                                    font-weight: 500;
-                                ">🔒 Click copy to reveal full UPI ID</div>
-                            </div>
-                            <button onclick="copyUPIID()" style="
-                                background: linear-gradient(135deg, #4285f4 0%, #667eea 100%);
-                                color: white;
-                                border: none;
-                                padding: 12px 20px;
-                                border-radius: 25px;
-                                cursor: pointer;
-                                font-weight: 700;
-                                font-size: 14px;
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 6px 20px rgba(66, 133, 244, 0.3);
-                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(66, 133, 244, 0.4)'" 
-                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(66, 133, 244, 0.3)'">
-                                📋 Copy UPI ID
-                            </button>
-                        </div>
+                        <div id="displayedUPIID" style="
+                            font-size: 18px;
+                            font-weight: 700;
+                            color: #495057;
+                            margin-bottom: 10px;
+                            font-family: monospace;
+                            word-break: break-all;
+                        ">${actualUPIID}</div>
+                        <button onclick="copyUPIID()" style="
+                            background: #007bff;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: 600;
+                        ">Copy UPI ID</button>
                     </div>
 
-                    <!-- Amount Display -->
+                    <!-- Amount -->
                     <div style="
-                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                        color: white;
-                        padding: 15px 25px;
-                        border-radius: 25px;
-                        display: inline-block;
-                        font-weight: 700;
-                        font-size: 22px;
-                        margin-bottom: 15px;
-                        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
-                        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-                    ">₹${order.price.toFixed(2)}</div>
+                        text-align: center;
+                        margin-bottom: 20px;
+                    ">
+                        <div style="
+                            font-size: 14px;
+                            color: #6c757d;
+                            margin-bottom: 5px;
+                        ">Amount to Pay</div>
+                        <div style="
+                            font-size: 28px;
+                            font-weight: 700;
+                            color: #28a745;
+                        ">₹${order.price.toFixed(2)}</div>
+                    </div>
 
-                    <p style="
-                        color: #666; 
-                        font-size: 14px; 
-                        margin: 0;
-                        font-weight: 500;
-                    ">💳 Compatible with all UPI apps • Instant transfer</p>
                 </div>
 
                 <!-- Instructions -->
                 <div style="
-                    background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
-                    border-radius: 15px;
+                    background: white;
+                    border-radius: 8px;
                     padding: 20px;
-                    margin-bottom: 25px;
-                    border-left: 4px solid #2196f3;
+                    margin-bottom: 20px;
+                    border-left: 4px solid #007bff;
                 ">
                     <h4 style="
-                        color: #1976d2; 
-                        margin: 0 0 15px 0; 
+                        margin: 0 0 15px 0;
                         font-size: 16px;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                    ">
-                        📋 Payment Steps:
-                    </h4>
+                        color: #495057;
+                        font-weight: 600;
+                    ">How to Pay</h4>
                     <ol style="
-                        color: #1976d2; 
-                        margin: 0; 
-                        padding-left: 20px; 
-                        font-size: 14px; 
-                        line-height: 1.8;
-                        font-weight: 500;
+                        margin: 0;
+                        padding-left: 20px;
+                        color: #6c757d;
+                        font-size: 14px;
+                        line-height: 1.6;
                     ">
-                        <li>Open your UPI app (GPay, PhonePe, Paytm)</li>
+                        <li>Open any UPI app (GPay, PhonePe, Paytm)</li>
                         <li>Select "Send Money" or "Pay to Contact"</li>
-                        <li>Choose "UPI ID" payment option</li>
-                        <li>Copy & paste: <strong>${actualUPIID}</strong></li>
-                        <li>Enter amount: <strong>₹${order.price.toFixed(2)}</strong></li>
-                        <li>Add note: <strong>Order ${order.id}</strong></li>
-                        <li>Complete payment with UPI PIN</li>
+                        <li>Enter UPI ID: <strong style="color: #495057;">${actualUPIID}</strong></li>
+                        <li>Enter amount: <strong style="color: #495057;">₹${order.price.toFixed(2)}</strong></li>
+                        <li>Complete payment with your UPI PIN</li>
                     </ol>
                 </div>
 
-                <!-- Security Info -->
+                <!-- Payment Confirmation Buttons -->
                 <div style="
-                    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
-                    border-radius: 15px;
-                    padding: 20px;
-                    margin-bottom: 25px;
-                    font-size: 14px;
-                    color: #155724;
-                    border-left: 4px solid #28a745;
+                    display: flex;
+                    gap: 12px;
+                    padding-bottom: 30px;
                 ">
-                    <div style="
-                        font-weight: 700; 
-                        margin-bottom: 12px;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        font-size: 16px;
-                    ">🔒 Secure Payment Details:</div>
-                    <div style="margin-bottom: 6px;">Order ID: <strong style="color: #0d4520;">${order.id}</strong></div>
-                    <div style="margin-bottom: 6px;">Recipient: <strong style="color: #0d4520;">India Social Panel</strong></div>
-                    <div style="margin-bottom: 6px;">Amount: <strong style="color: #0d4520; font-size: 16px;">₹${order.price.toFixed(2)}</strong></div>
-                    <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">🛡️ Protected by bank-grade security • SSL encrypted • RBI regulated</div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="display: flex; gap: 15px;">
                     <button onclick="markUPIPaid()" style="
                         flex: 1;
-                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                        background: #28a745;
                         color: white;
                         border: none;
-                        padding: 18px;
-                        border-radius: 15px;
+                        padding: 15px;
+                        border-radius: 8px;
                         cursor: pointer;
-                        font-weight: 700;
-                        font-size: 16px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(40, 167, 69, 0.4)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(40, 167, 69, 0.3)'">
-                       ✅ Payment Completed
-                    </button>
-
+                        font-weight: 600;
+                        font-size: 14px;
+                    ">Payment Done</button>
+                    
                     <button onclick="cancelUPIIDTransaction()" style="
                         flex: 1;
-                        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                        background: #6c757d;
                         color: white;
                         border: none;
-                        padding: 18px;
-                        border-radius: 15px;
+                        padding: 15px;
+                        border-radius: 8px;
                         cursor: pointer;
-                        font-weight: 700;
-                        font-size: 16px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(108, 117, 125, 0.4)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(108, 117, 125, 0.3)'">
-                       ❌ Cancel
-                    </button>
+                        font-weight: 600;
+                        font-size: 14px;
+                    ">Cancel</button>
                 </div>
             </div>
         </div>
@@ -3083,309 +3000,223 @@ function showCardBankingModal(order) {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0,0,0,0.8);
+        background: #f8f9fa;
         z-index: 10001;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
+        overflow-y: auto;
         animation: fadeIn 0.3s ease;
-        backdrop-filter: blur(8px);
     `;
 
     let timerInterval;
-    let timeLeft = 300; // 5 minutes
+    let timeLeft = 900; // 15 minutes
 
     cardModal.innerHTML = `
         <div style="
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 25px;
+            min-height: 100vh;
+            background: #f8f9fa;
+            padding: 0;
+            margin: 0;
             width: 100%;
-            max-width: 500px;
-            max-height: 95vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-            border: 3px solid transparent;
-            background-clip: padding-box;
-            position: relative;
         ">
-            <!-- Animated Border -->
+            <!-- Header with Logo -->
             <div style="
-                position: absolute;
-                top: -3px;
-                left: -3px;
-                right: -3px;
-                bottom: -3px;
-                background: linear-gradient(135deg, #9c27b0 0%, #673ab7 50%, #9c27b0 100%);
-                border-radius: 25px;
-                z-index: -1;
-                animation: borderGlow 3s ease-in-out infinite;
-            "></div>
-
-            <!-- Header Section -->
-            <div style="
-                background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
-                color: white;
-                padding: 30px;
+                background: white;
+                padding: 15px 20px;
                 text-align: center;
-                border-radius: 22px 22px 0 0;
-                position: relative;
-                overflow: hidden;
+                border-bottom: 1px solid #e0e0e0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
             ">
                 <div style="
-                    width: 70px;
-                    height: 70px;
-                    background: rgba(255,255,255,0.25);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 20px;
-                    font-size: 32px;
-                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-                    animation: cardIconFloat 3s ease-in-out infinite;
-                ">💳</div>
-                <h2 style="margin: 0 0 12px 0; font-size: 24px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Card & Net Banking</h2>
-                <p style="margin: 0; font-size: 16px; opacity: 0.95;">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #28a745;
+                    margin-bottom: 4px;
+                ">India Social Panel</div>
                 <div style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                    animation: shimmer 2s infinite;
-                "></div>
+                    font-size: 14px;
+                    color: #6c757d;
+                ">Card & Banking Payment Gateway</div>
             </div>
 
-            <!-- Timer -->
+            <!-- Main Content -->
             <div style="
-                background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-                color: #856404;
-                padding: 12px 25px;
-                text-align: center;
-                font-size: 15px;
-                font-weight: 600;
-                border-bottom: 2px solid #f0c14b;
+                padding: 20px;
+                max-width: 400px;
+                margin: 0 auto;
             ">
-                ⏰ Session expires in: <span id="cardTimer" style="color: #b8860b; font-weight: 700; font-size: 16px;">05:00</span>
-            </div>
-
-            <!-- Content -->
-            <div style="padding: 35px;">
-                <h3 style="
-                    margin: 0 0 25px 0; 
-                    color: #333; 
-                    font-size: 20px; 
-                    text-align: center;
-                    font-weight: 600;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                ">🏦 Choose Payment Method</h3>
-
-                <!-- Payment Methods Grid -->
+                <!-- Payment Title -->
                 <div style="
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 20px;
-                    margin-bottom: 30px;
-                ">
-                    <button onclick="processCardPayment('credit')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 3px solid #e9ecef;
-                        border-radius: 20px;
-                        padding: 25px 15px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 12px;
-                        transition: all 0.3s ease;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                        position: relative;
-                        overflow: hidden;
-                    " onmouseover="this.style.borderColor='#667eea'; this.style.background='linear-gradient(145deg, #f8f9ff 0%, #e8f0ff 100%)'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(102, 126, 234, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'">
-                        <div style="
-                            font-size: 40px; 
-                            margin-bottom: 5px;
-                            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-                        ">💳</div>
-                        <span style="font-weight: 700;">Credit Card</span>
-                        <small style="
-                            font-size: 11px; 
-                            color: #666;
-                            text-align: center;
-                            line-height: 1.3;
-                        ">Visa • Mastercard • Rupay<br>American Express</small>
-                    </button>
-
-                    <button onclick="processCardPayment('debit')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 3px solid #e9ecef;
-                        border-radius: 20px;
-                        padding: 25px 15px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 12px;
-                        transition: all 0.3s ease;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                        position: relative;
-                        overflow: hidden;
-                    " onmouseover="this.style.borderColor='#28a745'; this.style.background='linear-gradient(145deg, #f1f8f1 0%, #e8f5e8 100%)'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(40, 167, 69, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'">
-                        <div style="
-                            font-size: 40px; 
-                            margin-bottom: 5px;
-                            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-                        ">💳</div>
-                        <span style="font-weight: 700;">Debit Card</span>
-                        <small style="
-                            font-size: 11px; 
-                            color: #666;
-                            text-align: center;
-                            line-height: 1.3;
-                        ">All Major Banks<br>Instant Processing</small>
-                    </button>
-
-                    <button onclick="processCardPayment('netbanking')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 3px solid #e9ecef;
-                        border-radius: 20px;
-                        padding: 25px 15px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 12px;
-                        transition: all 0.3s ease;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                        position: relative;
-                        overflow: hidden;
-                    " onmouseover="this.style.borderColor='#ffc107'; this.style.background='linear-gradient(145deg, #fffbf0 0%, #fff0d9 100%)'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(255, 193, 7, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'">
-                        <div style="
-                            font-size: 40px; 
-                            margin-bottom: 5px;
-                            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-                        ">🏦</div>
-                        <span style="font-weight: 700;">Net Banking</span>
-                        <small style="
-                            font-size: 11px; 
-                            color: #666;
-                            text-align: center;
-                            line-height: 1.3;
-                        ">50+ Banks Available<br>Secure Login</small>
-                    </button>
-
-                    <button onclick="processCardPayment('wallet')" style="
-                        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-                        border: 3px solid #e9ecef;
-                        border-radius: 20px;
-                        padding: 25px 15px;
-                        cursor: pointer;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 12px;
-                        transition: all 0.3s ease;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #333;
-                        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-                        position: relative;
-                        overflow: hidden;
-                    " onmouseover="this.style.borderColor='#e83e8c'; this.style.background='linear-gradient(145deg, #fdf2f6 0%, #f8e5f0 100%)'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(232, 62, 140, 0.3)'" 
-                       onmouseout="this.style.borderColor='#e9ecef'; this.style.background='linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'">
-                        <div style="
-                            font-size: 40px; 
-                            margin-bottom: 5px;
-                            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-                        ">👛</div>
-                        <span style="font-weight: 700;">Digital Wallet</span>
-                        <small style="
-                            font-size: 11px; 
-                            color: #666;
-                            text-align: center;
-                            line-height: 1.3;
-                        ">MobiKwik • Airtel Money<br>Quick & Easy</small>
-                    </button>
-                </div>
-
-                <!-- Security Info -->
-                <div style="
-                    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
-                    border: 2px solid #28a745;
-                    border-radius: 15px;
-                    padding: 18px;
                     text-align: center;
                     margin-bottom: 25px;
-                    font-size: 14px;
-                    color: #155724;
-                    font-weight: 600;
                 ">
-                    🔒 Bank-Grade Security • SSL Encrypted • PCI DSS Compliant • RBI Approved
+                    <h2 style="
+                        margin: 0 0 8px 0;
+                        font-size: 18px;
+                        color: #495057;
+                        font-weight: 600;
+                    ">Card & Banking Payment</h2>
+                    <p style="
+                        margin: 0;
+                        font-size: 14px;
+                        color: #6c757d;
+                    ">Pay ₹${order.price.toFixed(2)} for Order ${order.id}</p>
                 </div>
 
-                <!-- Payment Summary -->
+                <!-- Timer -->
                 <div style="
-                    background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-                    border-radius: 15px;
-                    padding: 20px;
+                    background: white;
+                    border-radius: 8px;
+                    padding: 15px;
                     text-align: center;
-                    margin-bottom: 25px;
-                    font-size: 14px;
-                    color: #856404;
+                    margin-bottom: 20px;
                     border-left: 4px solid #ffc107;
                 ">
                     <div style="
-                        font-weight: 700; 
-                        margin-bottom: 12px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 8px;
-                        font-size: 16px;
-                    ">💰 Payment Summary</div>
-                    <div style="margin-bottom: 6px;">Order ID: <strong style="color: #b8860b;">${order.id}</strong></div>
-                    <div style="margin-bottom: 6px;">Amount: <strong style="color: #b8860b; font-size: 16px;">₹${order.price.toFixed(2)}</strong></div>
-                    <div style="margin-bottom: 6px;">Processing Fee: <strong style="color: #28a745;">₹0 (FREE)</strong></div>
-                    <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">🛡️ Zero hidden charges • Instant processing</div>
+                        font-size: 14px;
+                        color: #856404;
+                        margin-bottom: 5px;
+                    ">Session expires in</div>
+                    <div id="cardTimer" style="
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #856404;
+                        font-family: monospace;
+                    ">15:00</div>
+                    <div style="
+                        font-size: 12px;
+                        color: #856404;
+                        margin-top: 5px;
+                    ">mins</div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div style="display: flex; gap: 15px;">
+                <!-- Payment Methods -->
+                <div style="
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 15px;
+                    margin-bottom: 20px;
+                ">
+                    <button onclick="processCardPayment('credit')" style="
+                        background: white;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 10px;
+                        padding: 20px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        transition: all 0.2s ease;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #495057;
+                        width: 100%;
+                        text-align: left;
+                    ">
+                        <div style="font-size: 24px;">💳</div>
+                        <div>
+                            <div>Credit Card</div>
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 400;">Visa, Mastercard, Rupay</div>
+                        </div>
+                    </button>
+
+                    <button onclick="processCardPayment('debit')" style="
+                        background: white;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 10px;
+                        padding: 20px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        transition: all 0.2s ease;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #495057;
+                        width: 100%;
+                        text-align: left;
+                    ">
+                        <div style="font-size: 24px;">💳</div>
+                        <div>
+                            <div>Debit Card</div>
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 400;">All major banks</div>
+                        </div>
+                    </button>
+
+                    <button onclick="processCardPayment('netbanking')" style="
+                        background: white;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 10px;
+                        padding: 20px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        transition: all 0.2s ease;
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #495057;
+                        width: 100%;
+                        text-align: left;
+                    ">
+                        <div style="font-size: 24px;">🏦</div>
+                        <div>
+                            <div>Net Banking</div>
+                            <div style="font-size: 12px; color: #6c757d; font-weight: 400;">50+ banks available</div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Order Details -->
+                <div style="
+                    background: white;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #495057;
+                        margin-bottom: 10px;
+                        font-weight: 600;
+                    ">Payment Details</div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    ">
+                        <span style="color: #6c757d;">Order ID:</span>
+                        <span style="color: #495057; font-weight: 600;">${order.id}</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    ">
+                        <span style="color: #6c757d;">Amount:</span>
+                        <span style="color: #28a745; font-weight: 700; font-size: 16px;">₹${order.price.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <!-- Cancel Button -->
+                <div style="
+                    display: flex;
+                    gap: 12px;
+                    padding-bottom: 30px;
+                ">
                     <button onclick="cancelCardTransaction()" style="
                         flex: 1;
-                        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+                        background: #6c757d;
                         color: white;
                         border: none;
-                        padding: 18px;
-                        border-radius: 15px;
+                        padding: 15px;
+                        border-radius: 8px;
                         cursor: pointer;
-                        font-weight: 700;
-                        font-size: 16px;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(108, 117, 125, 0.4)'" 
-                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(108, 117, 125, 0.3)'">
-                       ❌ Cancel Transaction
-                    </button>
+                        font-weight: 600;
+                        font-size: 14px;
+                    ">Cancel</button>
                 </div>
             </div>
         </div>
