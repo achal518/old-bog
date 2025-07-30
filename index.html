@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +20,15 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="logo">
-                    <span class="logo-text">India Social Panel</span>
+                    <div class="logo-container">
+                        <div class="logo-icon">
+                            <i class="fas fa-chart-network"></i>
+                        </div>
+                        <div class="logo-text">
+                            <span class="logo-main">India Social Panel</span>
+                            <span class="logo-sub">Premium Social Media Services</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="header-right">
@@ -57,7 +64,7 @@
                     <li><a href="#" id="apiNav"><i class="fas fa-code"></i> API</a></li>
                     <li><a href="#" id="referEarnNav"><i class="fas fa-gift"></i> Refer & Earn</a></li>
                     <li><a href="#" id="tutorialVideoNav"><i class="fas fa-play-circle"></i> Tutorial Video</a></li>
-                    <li><a href="#" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
+                    <li><a href="#" onclick="window.location.href='https://sbbsixrlogin.netlify.app/'"><i class="fas fa-sign-out-alt"></i> Sign Out</a></li>
                 </ul>
             </div>
         </nav>
@@ -298,6 +305,13 @@
                         <div class="quantity-info">Min: 100 - Max: 1000000</div>
                     </div>
 
+                    <!-- Coupon Code Input -->
+                    <div id="couponSection" class="input-section hidden">
+                        <label for="couponInput">Coupon Code (Optional)</label>
+                        <input type="text" id="couponInput" placeholder="Enter coupon code" class="coupon-input">
+                        <div id="couponValidationMessage" class="validation-message hidden"></div>
+                    </div>
+
                     <!-- You will pay -->
                     <div class="payment-section">
                         <h4>You will pay</h4>
@@ -331,8 +345,8 @@
                     <div class="news-item">
                         <div class="news-date">2025-05-21 13:01:03</div>
                         <div class="news-content">
-                            <h4>🎉 Congratulations 🎉</h4>
-                            <p>Now You are a <span class="member-text">Member</span> of India Social Panel.in</p>
+                            <h4 id="congratulationsText">🎉 Congratulations 🎉</h4>
+                            <p id="membershipText">Now You are a <span class="member-text" id="memberText">Member</span> of India Social Panel.in</p>
                         </div>
                     </div>
                 </div>
@@ -673,29 +687,107 @@
             <div id="addFundsPage" class="page">
                 <div class="page-header">
                     <h2>Add Funds</h2>
+                    <p>Deposit money to start ordering services</p>
                 </div>
-                <div class="add-funds-content">
-                    <div class="payment-methods">
-                        <div class="method-card">
-                            <i class="fab fa-google-pay"></i>
-                            <h4>UPI Payment</h4>
-                            <p>Instant transfer via UPI</p>
-                        </div>
-                        <div class="method-card">
-                            <i class="fas fa-credit-card"></i>
-                            <h4>Card Payment</h4>
-                            <p>Credit/Debit card payments</p>
-                        </div>
-                        <div class="method-card">
-                            <i class="fas fa-university"></i>
-                            <h4>Bank Transfer</h4>
-                            <p>Direct bank transfer</p>
-                        </div>
+
+                <!-- Current Balance Card -->
+                <div class="balance-card">
+                    <div class="balance-icon">
+                        <i class="fas fa-wallet"></i>
                     </div>
-                    <div class="amount-section">
-                        <label>Enter Amount</label>
-                        <input type="number" placeholder="₹100" class="amount-input">
-                        <button class="add-funds-btn">Add Funds</button>
+                    <div class="balance-info">
+                        <h4>CURRENT BALANCE</h4>
+                        <div class="balance-amount">₹0.00</div>
+                        <p>Your wallet balance</p>
+                    </div>
+                </div>
+
+                <!-- Amount Input Section -->
+                <div class="amount-section">
+                    <div>
+                        <h3>Enter Amount to Add</h3>
+                        <input 
+                            type="number" 
+                            id="addFundsAmountInput"
+                            placeholder="Enter amount (Min: ₹100)" 
+                            class="amount-input"
+                            min="100"
+                            max="100000"
+                            oninput="validateAddFundsAmount()"
+                        >
+                        <div class="amount-note">Minimum: ₹100 | Maximum: ₹100,000</div>
+
+                        <!-- Quick Amount Buttons -->
+                        <div class="quick-amounts">
+                            <h4>💡 Quick Select</h4>
+                            <div class="quick-amount-grid">
+                                <button class="quick-amount-btn" onclick="setQuickAmount(500)">₹500</button>
+                                <button class="quick-amount-btn" onclick="setQuickAmount(1000)">₹1K</button>
+                                <button class="quick-amount-btn" onclick="setQuickAmount(2000)">₹2K</button>
+                            </div>
+                        </div>
+
+                        <!-- Payment Methods -->
+                        <div class="payment-methods">
+                            <h4>Payment Methods</h4>
+
+                            <!-- UPI Method Card -->
+                            <div class="method-card upi-card" onclick="proceedWithUPI()">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div>
+                                    <h4>UPI Payment</h4>
+                                    <p>Pay with Google Pay, PhonePe, Paytm, etc.</p>
+                                </div>
+                                <span class="instant-badge">⚡ Instant</span>
+                            </div>
+
+                            <!-- Other Payment Methods -->
+                            <div class="method-card card-card" onclick="showComingSoon('Card Payment')">
+                                <i class="fas fa-credit-card"></i>
+                                <div>
+                                    <h4>Credit/Debit Card</h4>
+                                    <p>Pay with your credit or debit card</p>
+                                </div>
+                                <span class="coming-soon-badge">Coming Soon</span>
+                            </div>
+
+                            <div class="method-card bank-card" onclick="showComingSoon('Bank Transfer')">
+                                <i class="fas fa-university"></i>
+                                <div>
+                                    <h4>Bank Transfer</h4>
+                                    <p>Direct bank account transfer</p>
+                                </div>
+                                <span class="coming-soon-badge">Coming Soon</span>
+                            </div>
+                        </div>
+
+                        <!-- Add Funds Button -->
+                        <button 
+                            id="dynamicAddFundsBtn"
+                            onclick="showAddFundsPaymentOptions()"
+                            class="add-funds-btn"
+                            disabled
+                        >
+                            <i class="fas fa-plus-circle"></i>
+                            Add Funds
+                        </button>
+
+                        <!-- Google Pay UPI Button -->
+                        <button 
+                            id="googlePayUPIBtn"
+                            onclick="openUPIAppGeneral()"
+                            class="add-funds-btn"
+                            style="background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%); margin-top: 10px;"
+                            disabled
+                        >
+                            <i class="fab fa-google-pay"></i>
+                            Pay with UPI Apps
+                        </button>
+
+                        <div class="security-info">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure payment with SSL encryption</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -850,129 +942,6 @@
 }</code></pre>
                                 </div>
 
-
-    <!-- Welcome Popup Modal -->
-    <div id="welcomePopupOverlay" class="welcome-popup-overlay">
-        <div class="welcome-popup-container">
-            <div class="welcome-popup-header">
-                <div class="welcome-logo">
-                    <i class="fas fa-crown"></i>
-                </div>
-                <h1 class="welcome-title">🎉 Welcome to India Social Panel! 🎉</h1>
-                <p class="welcome-subtitle">Your Gateway to Social Media Success</p>
-            </div>
-
-            <div class="welcome-popup-content">
-                <div class="welcome-message">
-                    <h2>🚀 Congratulations! You're Now a Member! 🚀</h2>
-                    <p class="welcome-description">
-                        Welcome to India's most trusted and reliable social media marketing platform! You've joined thousands of satisfied customers who have transformed their social media presence with our premium services.
-                    </p>
-                </div>
-
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <h3>Instant Results</h3>
-                        <p>Fast delivery starting in 0-15 minutes with guaranteed high-quality services across all major platforms.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3>100% Safe & Secure</h3>
-                        <p>Your account safety is our priority. We use only secure methods with zero ban risk guarantee.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-headset"></i>
-                        </div>
-                        <h3>24/7 Support</h3>
-                        <p>Round-the-clock customer support via Telegram, WhatsApp, and phone to assist you anytime.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <h3>Best Prices</h3>
-                        <p>Competitive pricing with flexible payment options including UPI, cards, and net banking.</p>
-                    </div>
-                </div>
-
-                <div class="trust-section">
-                    <h3><i class="fas fa-certificate"></i> Why Choose India Social Panel?</h3>
-                    <div class="trust-stats">
-                        <div class="trust-stat">
-                            <div class="trust-stat-number">119M+</div>
-                            <div class="trust-stat-label">Orders Completed</div>
-                        </div>
-                        <div class="trust-stat">
-                            <div class="trust-stat-number">3+</div>
-                            <div class="trust-stat-label">Years Experience</div>
-                        </div>
-                        <div class="trust-stat">
-                            <div class="trust-stat-number">99.8%</div>
-                            <div class="trust-stat-label">Success Rate</div>
-                        </div>
-                        <div class="trust-stat">
-                            <div class="trust-stat-number">365</div>
-                            <div class="trust-stat-label">Days Guarantee</div>
-                        </div>
-                    </div>
-                    <ul class="trust-points">
-                        <li>Registered digital marketing agency with legal compliance</li>
-                        <li>Real and active followers/likes from genuine accounts</li>
-                        <li>365-day refill guarantee on all eligible services</li>
-                        <li>SSL secured platform with encrypted payment processing</li>
-                        <li>No password required - completely safe for your accounts</li>
-                        <li>Instant start and fastest delivery in the industry</li>
-                    </ul>
-                </div>
-
-                <div class="support-section">
-                    <h3><i class="fas fa-life-ring"></i> Get Instant Support</h3>
-                    <div class="support-links">
-                        <a href="https://t.me/Indiasocialpainel_support_bot?start=start" class="support-link telegram" target="_blank">
-                            <i class="fab fa-telegram"></i>
-                            <span>Telegram Support</span>
-                        </a>
-                        <a href="tel:+919431863716" class="support-link phone">
-                            <i class="fas fa-phone"></i>
-                            <span>+91 9431863716</span>
-                        </a>
-                        <a href="https://wa.me/919431863716?text=Hello! I need support from India Social Panel." class="support-link whatsapp" target="_blank">
-                            <i class="fab fa-whatsapp"></i>
-                            <span>WhatsApp Support</span>
-                        </a>
-                        <a href="https://instagram.com/indiasocialpanel.official" class="support-link instagram" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                            <span>Follow Us</span>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="cta-section">
-                    <div class="cta-message">
-                        🎯 Ready to Boost Your Social Media Presence?
-                    </div>
-                    <button class="welcome-cta-btn" onclick="closeWelcomePopup()">
-                        <i class="fas fa-shopping-cart"></i>
-                        Start Your First Order Now!
-                    </button>
-                </div>
-            </div>
-
-            <div class="popup-footer">
-                <p>🔒 Your privacy and account security are our top priorities. We never ask for passwords and use only safe, industry-standard methods.</p>
-                <p><strong>India Social Panel</strong> - Transforming Social Media Dreams into Reality Since 2022</p>
-            </div>
-        </div>
-    </div>
 
 
                             </div>
@@ -1404,7 +1373,18 @@ print(response.json())</code></pre>
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>India Social Panel</h3>
+
+                    <div class="footer-logo">
+                    <div class="footer-logo-container">
+                        <div class="footer-logo-icon">
+                            <i class="fas fa-chart-network"></i>
+                        </div>
+                        <div class="footer-logo-text">
+                            <span class="footer-logo-main">India Social Panel</span>
+                            <span class="footer-logo-sub">Premium Social Media Services</span>
+                        </div>
+                    </div>
+                </div>
                     <p>India Social Panel is a registered digital marketing agency specializing in Website Development, Social Media Marketing, Graphic Design, and Meta & Google Ads services. We are committed to delivering exceptional results to help your business grow online.</p>
                 </div>
 
@@ -1452,6 +1432,9 @@ print(response.json())</code></pre>
     <div class="floating-contact">
         <div class="contact-widget">
             <div class="contact-options" id="contactOptions">
+                <button class="contact-option phone" data-tooltip="Call Support" onclick="openPhoneDialer()">
+                    <i class="fas fa-phone"></i>
+                </button>
                 <button class="contact-option whatsapp" data-tooltip="WhatsApp Support" onclick="openWhatsAppSupport()">
                     <i class="fab fa-whatsapp"></i>
                 </button>
@@ -1526,6 +1509,11 @@ print(response.json())</code></pre>
             </div>
         </div>
     </div>
+
+
+
+
+
 
     <script src="script.js"></script>
 </body>
