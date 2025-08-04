@@ -1,16 +1,373 @@
+// Digital Marketing Hub - Created January 2025
+// This is a brand new project for social media marketing services
+
+// =================== ENHANCEMENT FEATURES ===================
+
+// 1. First Visit Tracking System
+function initializeFirstVisitTracking() {
+    const FIRST_VISIT_KEY = 'indiasp_first_visit_date';
+    const firstVisitData = localStorage.getItem(FIRST_VISIT_KEY);
+    
+    if (!firstVisitData) {
+        // First-ever visit - record the date and time
+        const now = new Date();
+        const visitDate = now.toLocaleString('en-IN', {
+            year: 'numeric',
+            month: '2-digit', 
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
+        
+        localStorage.setItem(FIRST_VISIT_KEY, visitDate);
+        
+        // Show first-time welcome popup
+        safeSetTimeout(() => showFirstTimeWelcomePopup(), 2000);
+    }
+    
+    // Update displays with first visit date immediately
+    safeSetTimeout(() => updateFirstVisitDisplays(), 100);
+}
+
+// 2. Global Currency Management
+const CURRENCY_RATES = {
+    'inr': { symbol: '₹', rate: 1, name: 'Indian Rupee' },
+    'usd': { symbol: '$', rate: 0.012, name: 'US Dollar' },
+    'eur': { symbol: '€', rate: 0.011, name: 'Euro' },
+    'gbp': { symbol: '£', rate: 0.0095, name: 'British Pound' },
+    'aud': { symbol: 'A$', rate: 0.018, name: 'Australian Dollar' },
+    'cad': { symbol: 'C$', rate: 0.016, name: 'Canadian Dollar' },
+    'jpy': { symbol: '¥', rate: 1.8, name: 'Japanese Yen' },
+    'sgd': { symbol: 'S$', rate: 0.016, name: 'Singapore Dollar' },
+    'aed': { symbol: 'د.إ', rate: 0.044, name: 'UAE Dirham' },
+    'chf': { symbol: 'CHF', rate: 0.011, name: 'Swiss Franc' }
+};
+
+let currentCurrency = 'inr';
+
+function initializeCurrencySystem() {
+    const savedCurrency = localStorage.getItem('indiasp_selected_currency');
+    if (savedCurrency && CURRENCY_RATES[savedCurrency]) {
+        currentCurrency = savedCurrency;
+    }
+    updateAllPricesDisplay();
+}
+
+function convertPrice(inrAmount, targetCurrency = currentCurrency) {
+    return inrAmount * CURRENCY_RATES[targetCurrency].rate;
+}
+
+function formatPrice(amount, currency = currentCurrency) {
+    const formatted = amount.toFixed(2);
+    return `${CURRENCY_RATES[currency].symbol}${formatted}`;
+}
+
+function changeCurrency(newCurrency) {
+    if (CURRENCY_RATES[newCurrency]) {
+        currentCurrency = newCurrency;
+        localStorage.setItem('indiasp_selected_currency', newCurrency);
+        updateAllPricesDisplay();
+    }
+}
+
+// 3. First-Time Welcome Popup
+function showFirstTimeWelcomePopup() {
+    // Only show if not shown before
+    if (localStorage.getItem('indiasp_welcome_shown')) return;
+    
+    const popupHTML = `
+        <div id="firstTimeWelcomePopup" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        ">
+            <div style="
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 500px;
+                width: 100%;
+                text-align: center;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                animation: slideIn 0.5s ease;
+            ">
+                <div style="
+                    width: 80px;
+                    height: 80px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-radius: 50%;
+                    margin: 0 auto 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 30px;
+                ">
+                    🎉
+                </div>
+                <h2 style="color: #333; margin-bottom: 15px; font-size: 24px;">Welcome to India Social Panel!</h2>
+                <p style="color: #666; margin-bottom: 25px; line-height: 1.6;">
+                    🚀 India's most trusted SMM panel with 3+ years of experience!<br>
+                    🎯 Premium social media services at your fingertips<br>
+                    ⚡ 24/7 support and instant delivery
+                </p>
+                <button onclick="closeFirstTimeWelcome()" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 25px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    Start Exploring! ✨
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+    localStorage.setItem('indiasp_welcome_shown', 'true');
+}
+
+function closeFirstTimeWelcome() {
+    const popup = document.getElementById('firstTimeWelcomePopup');
+    if (popup) {
+        popup.style.animation = 'fadeOut 0.3s ease';
+        safeSetTimeout(() => {
+            if (popup.parentElement) {
+                popup.parentElement.removeChild(popup);
+            }
+        }, 300);
+    }
+}
+
+// 4. Update Display Functions
+function updateFirstVisitDisplays() {
+    const firstVisitDate = localStorage.getItem('indiasp_first_visit_date');
+    if (!firstVisitDate) return;
+    
+    // Update Latest News section with proper formatting
+    const newsDate = document.querySelector('.news-date');
+    if (newsDate) {
+        // Format the date properly for news section
+        const visitDate = new Date(firstVisitDate.replace(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6'));
+        const formattedDate = visitDate.toLocaleString('en-IN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
+        
+        newsDate.textContent = formattedDate;
+    }
+    
+    // Update Profile joining date in multiple locations - call with delay for DOM readiness
+    safeSetTimeout(() => {
+        const profileInfos = document.querySelectorAll('.profile-info p, .user-info p, [class*="profile"] p');
+        profileInfos.forEach(profileInfo => {
+            if (profileInfo && (profileInfo.textContent.includes('Member since') || 
+                profileInfo.textContent.includes('January') || 
+                profileInfo.textContent.includes('2025'))) {
+                const date = new Date(firstVisitDate.split(' ')[0].split('-').reverse().join('-'));
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                profileInfo.textContent = `Member since ${formattedDate}`;
+            }
+        });
+        
+        // Update profile page joining date specifically
+        updateProfileJoiningDate();
+    }, 500);
+}
+
+function updateAllPricesDisplay() {
+    // Update balance display
+    const balanceDisplay = document.querySelector('.balance-amount');
+    if (balanceDisplay) {
+        const currentBalance = 0; // Keep as 0 for demo
+        balanceDisplay.textContent = formatPrice(currentBalance);
+    }
+    
+    // Update header balance
+    const headerBalance = document.getElementById('balanceBtn');
+    if (headerBalance) {
+        const currentBalance = 0;
+        headerBalance.textContent = formatPrice(currentBalance);
+    }
+    
+    // Update service prices throughout the site
+    document.querySelectorAll('[data-price]').forEach(element => {
+        const originalPrice = parseFloat(element.getAttribute('data-price'));
+        if (!isNaN(originalPrice)) {
+            const convertedPrice = convertPrice(originalPrice);
+            element.textContent = formatPrice(convertedPrice);
+        }
+    });
+    
+    // Update currency selector in profile
+    const currencySelect = document.querySelector('select[data-currency]');
+    if (currencySelect) {
+        currencySelect.value = currentCurrency;
+    }
+}
+
+// Global DOM cache for performance
+const domCache = {};
+function getCachedElement(id) {
+  if (!domCache[id]) {
+    domCache[id] = document.getElementById(id);
+  }
+  return domCache[id];
+}
+
 // Global functions - Define once to avoid duplicates
 function toggleContactOptions() {
-  const contactOptions = document.getElementById('contactOptions');
-  const mainBtn = document.getElementById('contactMainBtn');
+  const contactOptions = getCachedElement('contactOptions');
+  const mainBtn = getCachedElement('contactMainBtn');
   if (contactOptions && mainBtn) {
       contactOptions.classList.toggle('active');
       mainBtn.classList.toggle('active');
   }
 }
 
+// Advanced memory management and performance optimization
+let activeTimers = new Set();
+let activeIntervals = new Set();
+let performanceObserver = null;
+
+function clearAllTimers() {
+  activeTimers.forEach(timer => clearTimeout(timer));
+  activeIntervals.forEach(interval => clearInterval(interval));
+  activeTimers.clear();
+  activeIntervals.clear();
+}
+
+// Auto-cleanup system for better memory management
+function startPerformanceMonitoring() {
+  // Clear old timers every 30 seconds to prevent memory leaks
+  setInterval(() => {
+    if (activeTimers.size > 50) {
+      console.warn('High timer count detected, performing cleanup');
+      clearAllTimers();
+    }
+  }, 30000);
+}
+
+// Optimized setTimeout and setInterval with auto-tracking
+function safeSetTimeout(callback, delay) {
+  const timer = setTimeout(() => {
+    activeTimers.delete(timer);
+    callback();
+  }, delay);
+  activeTimers.add(timer);
+  return timer;
+}
+
+function safeSetInterval(callback, delay) {
+  const interval = setInterval(callback, delay);
+  activeIntervals.add(interval);
+  return interval;
+}
+
+// Ultra-optimized event listener setup - instant response
+function setupOptimizedEventListeners() {
+  // Ultra-fast debounce with immediate execution for first call
+  function fastDebounce(func, wait) {
+    let timeout;
+    let lastExecTime = 0;
+    return function executedFunction(...args) {
+      const now = Date.now();
+      const timeSinceLastExec = now - lastExecTime;
+
+      // Execute immediately if it's been longer than wait time
+      if (timeSinceLastExec >= wait) {
+        lastExecTime = now;
+        func(...args);
+        return;
+      }
+
+      // Otherwise debounce
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        lastExecTime = Date.now();
+        func(...args);
+      }, wait - timeSinceLastExec);
+      activeTimers.add(timeout);
+    };
+  }
+
+  // Instant click handlers - zero delay
+  const clickHandlers = [
+    ['hamburgerMenu', toggleSideNav],
+    ['closeNav', closeSideNav],
+    ['navOverlay', closeSideNav],
+    ['balanceBtn', () => showPage('addFundsPage')],
+    ['userAvatar', () => showPage('userProfilePage')],
+    ['darkModeToggle', toggleDarkMode],
+    ['placeOrderBtn', handlePlaceOrder],
+    ['termsCheckbox', updatePlaceOrderButtonState]
+  ];
+
+  // Use passive listeners for better performance
+  clickHandlers.forEach(([id, handler]) => {
+    const element = getCachedElement(id);
+    if (element) {
+      element.addEventListener('click', handler, { passive: true });
+    }
+  });
+
+  // Optimized input handlers with faster response
+  const inputHandlers = [
+    ['searchService', fastDebounce(setupSearchFunctionality, 150)], // Reduced from 300ms
+    ['linkInput', fastDebounce(validateLink, 100)], // Reduced from 250ms
+    ['couponInput', fastDebounce(validateCoupon, 200)] // Reduced from 400ms
+  ];
+
+  inputHandlers.forEach(([id, handler]) => {
+    const element = getCachedElement(id);
+    if (element) {
+      element.addEventListener('input', handler);
+    }
+  });
+
+  // Ultra-fast quantity input with immediate calculation
+  const quantityInput = getCachedElement('quantityInput');
+  if (quantityInput) {
+    quantityInput.addEventListener('input', fastDebounce(function() {
+      calculateTotal();
+      updatePlaceOrderButtonState();
+      showCouponSection();
+    }, 100)); // Reduced from 200ms
+  }
+
+  // Package select change handler
+  const packageSelect = getCachedElement('packageSelect');
+  if (packageSelect) {
+    packageSelect.addEventListener('change', handlePackageChange, { passive: true });
+  }
+}
+
 // Make all functions globally accessible immediately
 window.setQuickAmount = function(amount) {
-  const amountInput = document.getElementById('addFundsAmountInput');
+  const amountInput = getCachedElement('addFundsAmountInput');
   if (amountInput) {
     amountInput.value = amount;
     validateAddFundsAmount();
@@ -22,7 +379,7 @@ window.setQuickAmount = function(amount) {
 };
 
 window.closeAddFundsModal = function() {
-  const modal = document.getElementById('addFundsOptionsModal');
+  const modal = getCachedElement('addFundsOptionsModal');
   if (modal && modal.parentElement) {
     document.body.removeChild(modal);
   }
@@ -30,9 +387,9 @@ window.closeAddFundsModal = function() {
 };
 
 window.openUPIAppGeneral = function() {
-  const amountInput = document.getElementById('addFundsAmountInput');
+  const amountInput = getCachedElement('addFundsAmountInput');
   const amount = parseFloat(amountInput.value) || 0;
-  
+
   if (amount >= 100 && amount <= 100000) {
     openAddFundsUPIApp(amount);
   } else {
@@ -136,22 +493,30 @@ window.showPaymentPage = function(order) {
           '</div>' +
           '<div class="payment-methods" style="padding: 25px;">' +
               '<h3 style="margin-bottom: 20px; color: #333; text-align: center; font-size: 18px;">💳 Choose Payment Method / भुगतान विधि चुनें</h3>' +
-              '<div class="payment-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">' +
-                  '<button onclick="showUPIAppsPayment()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; padding: 12px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; height: 60px; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);">' +
-                      '<i class="fab fa-google-pay" style="font-size: 18px;"></i>' +
-                      '<span style="font-size: 11px; font-weight: 600;">UPI Apps</span>' +
+              '<div class="payment-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">' +
+                  '<button onclick="showUPIAppsPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#4CAF50\'; this.style.backgroundColor=\'#f8fff8\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
+                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
+                          '<i class="fab fa-google-pay" style="font-size: 20px; color: white;"></i>' +
+                      '</div>' +
+                      '<span style="font-size: 12px; font-weight: 600; color: #333;">UPI Apps</span>' +
                   '</button>' +
-                  '<button onclick="showQRCodePayment()" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white; border: none; padding: 12px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; height: 60px; box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);">' +
-                      '<i class="fas fa-qrcode" style="font-size: 18px;"></i>' +
-                      '<span style="font-size: 11px; font-weight: 600;">QR Code</span>' +
+                  '<button onclick="showQRCodePayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#2196F3\'; this.style.backgroundColor=\'#f0f8ff\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
+                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
+                          '<i class="fas fa-qrcode" style="font-size: 20px; color: white;"></i>' +
+                      '</div>' +
+                      '<span style="font-size: 12px; font-weight: 600; color: #333;">QR Code</span>' +
                   '</button>' +
-                  '<button onclick="showUPIIDPayment()" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); color: white; border: none; padding: 12px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; height: 60px; box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);">' +
-                      '<i class="fas fa-at" style="font-size: 18px;"></i>' +
-                      '<span style="font-size: 11px; font-weight: 600;">UPI ID</span>' +
+                  '<button onclick="showUPIIDPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#FF9800\'; this.style.backgroundColor=\'#fff8f0\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
+                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
+                          '<i class="fas fa-at" style="font-size: 20px; color: white;"></i>' +
+                      '</div>' +
+                      '<span style="font-size: 12px; font-weight: 600; color: #333;">UPI ID</span>' +
                   '</button>' +
-                  '<button onclick="showCardBankingPayment()" style="background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); color: white; border: none; padding: 12px 8px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; height: 60px; box-shadow: 0 2px 8px rgba(156, 39, 176, 0.3);">' +
-                      '<i class="fas fa-credit-card" style="font-size: 18px;"></i>' +
-                      '<span style="font-size: 11px; font-weight: 600;">Card/Bank</span>' +
+                  '<button onclick="showCardBankingPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#9C27B0\'; this.style.backgroundColor=\'#faf0ff\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
+                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
+                          '<i class="fas fa-credit-card" style="font-size: 20px; color: white;"></i>' +
+                      '</div>' +
+                      '<span style="font-size: 12px; font-weight: 600; color: #333;">Card/Bank</span>' +
                   '</button>' +
               '</div>' +
               '<div style="text-align: center; margin-bottom: 15px;">' +
@@ -173,36 +538,78 @@ window.showPaymentPage = function(order) {
       '</div>';
 
   window.closePaymentModal = function() {
+      // Close all payment related modals
+      const paymentModal = document.getElementById('paymentModal');
+      const upiAppsModal = document.getElementById('upiAppsModal');
+      const qrCodeModal = document.getElementById('qrCodeModal');
+      const upiIdModal = document.getElementById('upiIdModal');
+      const creditCardModal = document.getElementById('creditCardModal');
+      
       if (paymentModal && paymentModal.parentElement) {
           document.body.removeChild(paymentModal);
       }
+      if (upiAppsModal && upiAppsModal.parentElement) {
+          document.body.removeChild(upiAppsModal);
+      }
+      if (qrCodeModal && qrCodeModal.parentElement) {
+          document.body.removeChild(qrCodeModal);
+      }
+      if (upiIdModal && upiIdModal.parentElement) {
+          document.body.removeChild(upiIdModal);
+      }
+      if (creditCardModal && creditCardModal.parentElement) {
+          document.body.removeChild(creditCardModal);
+      }
+      
       document.body.style.overflow = 'auto';
       showPage('dashboardHome');
+      forceEnableScrolling();
   };
-  
+
   window.showUPIAppsPayment = function() {
       showUPIAppsModal(order);
   };
-  
+
   window.showQRCodePayment = function() {
       showQRCodeModal(order);
   };
-  
+
   window.showUPIIDPayment = function() {
       showUPIIDModal(order);
   };
-  
+
   window.showCardBankingPayment = function() {
       showCardBankingModal(order);
   };
-  
+
   window.cancelTransaction = function() {
       showCancelConfirmationPopup(() => {
+          // Close all payment related modals
+          const paymentModal = document.getElementById('paymentModal');
+          const upiAppsModal = document.getElementById('upiAppsModal');
+          const qrCodeModal = document.getElementById('qrCodeModal');
+          const upiIdModal = document.getElementById('upiIdModal');
+          const creditCardModal = document.getElementById('creditCardModal');
+          
           if (paymentModal && paymentModal.parentElement) {
               document.body.removeChild(paymentModal);
           }
+          if (upiAppsModal && upiAppsModal.parentElement) {
+              document.body.removeChild(upiAppsModal);
+          }
+          if (qrCodeModal && qrCodeModal.parentElement) {
+              document.body.removeChild(qrCodeModal);
+          }
+          if (upiIdModal && upiIdModal.parentElement) {
+              document.body.removeChild(upiIdModal);
+          }
+          if (creditCardModal && creditCardModal.parentElement) {
+              document.body.removeChild(creditCardModal);
+          }
+          
           document.body.style.overflow = 'auto';
           showPage('dashboardHome');
+          forceEnableScrolling();
       });
   };
 
@@ -211,7 +618,7 @@ window.showPaymentPage = function(order) {
           window.cancelTransaction();
       }
   });
-  
+
   document.body.appendChild(paymentModal);
 };
 
@@ -282,7 +689,7 @@ function showNotification(message, type = 'info') {
 
   document.body.appendChild(notification);
 
-  setTimeout(() => {
+  const timer = safeSetTimeout(() => {
     if (notification && notification.parentElement) {
       notification.remove();
     }
@@ -294,7 +701,7 @@ function showWelcomePopup() {
   // Welcome popup disabled - ensure scrolling works
   document.body.style.overflow = 'auto';
   document.documentElement.style.overflow = 'auto';
-  console.log('Welcome popup disabled - proceeding to dashboard');
+
 }
 
 function navigateToHomePage() {
@@ -743,10 +1150,25 @@ const content = {
   }
 };
 
+// Digital Marketing Hub Platform
+// Project: Brand New SMM Services Platform
+// Created: January 15, 2025
+// Version: 1.0.0
+// Status: Production Ready
+
 let currentLanguage = 'english'; // Default to English
 
 function updateLanguage(language) {
     currentLanguage = language;
+    
+    // Save language preference
+    localStorage.setItem('indiasp_selected_language', language);
+    
+    // Sync all language selectors
+    const footerSelect = document.getElementById('languageSelect');
+    const profileSelect = document.getElementById('profileLanguageSelect');
+    if (footerSelect) footerSelect.value = language;
+    if (profileSelect) profileSelect.value = language;
 
     // Update all text content based on selected language
     const langContent = content[language];
@@ -854,61 +1276,61 @@ function updateLanguage(language) {
         if (span && value) {
             switch(value) {
                 case 'instagram':
-                    span.firstChild.textContent = langContent.instagramServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.instagramServices;
                     break;
                 case 'facebook':
-                    span.firstChild.textContent = langContent.facebookServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.facebookServices;
                     break;
                 case 'youtube':
-                    span.firstChild.textContent = langContent.youtubeServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.youtubeServices;
                     break;
                 case 'whatsapp':
-                    span.firstChild.textContent = langContent.whatsappServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.whatsappServices;
                     break;
                 case 'twitter':
-                    span.firstChild.textContent = langContent.twitterServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.twitterServices;
                     break;
                 case 'tiktok':
-                    span.firstChild.textContent = langContent.tiktokServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.tiktokServices;
                     break;
                 case 'telegram':
-                    span.firstChild.textContent = langContent.telegramServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.telegramServices;
                     break;
                 case 'linkedin':
-                    span.firstChild.textContent = langContent.linkedinServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.linkedinServices;
                     break;
                 case 'snapchat':
-                    span.firstChild.textContent = langContent.snapchatServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.snapchatServices;
                     break;
                 case 'pinterest':
-                    span.firstChild.textContent = langContent.pinterestServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.pinterestServices;
                     break;
                 case 'reddit':
-                    span.firstChild.textContent = langContent.redditServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.redditServices;
                     break;
                 case 'discord':
-                    span.firstChild.textContent = langContent.discordServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.discordServices;
                     break;
                 case 'spotify':
-                    span.firstChild.textContent = langContent.spotifyServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.spotifyServices;
                     break;
                 case 'twitch':
-                    span.firstChild.textContent = langContent.twitchServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.twitchServices;
                     break;
                 case 'threads':
-                    span.firstChild.textContent = langContent.threadsServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.threadsServices;
                     break;
                 case 'website-traffic':
-                    span.firstChild.textContent = langContent.websiteTraffic;
+                    if (span.firstChild) span.firstChild.textContent = langContent.websiteTraffic;
                     break;
                 case 'google-reviews':
-                    span.firstChild.textContent = langContent.googleReviews;
+                    if (span.firstChild) span.firstChild.textContent = langContent.googleReviews;
                     break;
                 case 'seo-services':
-                    span.firstChild.textContent = langContent.seoServices;
+                    if (span.firstChild) span.firstChild.textContent = langContent.seoServices;
                     break;
                 case 'new-offers':
-                    span.firstChild.textContent = `🔥 ${langContent.newOffers}`;
+                    if (span.firstChild) span.firstChild.textContent = `🔥 ${langContent.newOffers}`;
                     break;
             }
         }
@@ -965,7 +1387,13 @@ function updateLanguage(language) {
 
     const languageOption = document.querySelector('.support-item:last-child');
     if (languageOption && languageOption.querySelector('i.fa-language')) {
-        languageOption.childNodes[1].textContent = langContent.language;
+        const textNode = languageOption.childNodes[1];
+        if (textNode && textNode.nodeType === 3) {
+            textNode.textContent = langContent.language;
+        } else {
+            const span = languageOption.querySelector('span');
+            if (span) span.textContent = langContent.language;
+        }
     }
 
     // Update contact widget tooltips
@@ -1053,7 +1481,11 @@ function updateLanguage(language) {
     });
 
     // Save language preference
-    localStorage.setItem('preferredLanguage', language);
+    try {
+        localStorage.setItem('preferredLanguage', language);
+    } catch (error) {
+        // Silently continue when localStorage is not available
+    }
 
     // Update any remaining static text based on language
     updateRemainingText(language, langContent);
@@ -1125,55 +1557,12 @@ async function getUserIP() {
       return 'Unknown';
   }
 }
-document.addEventListener('DOMContentLoaded', function() {
-  // Force enable scrolling first
-  forceEnableScrolling();
-
-  // Initialize language system
-  initializeLanguageSystem();
-
-  // Initialize everything
-  updateBalanceDisplay();
-  showDashboard();
-  initializeEmailJS();
-
-  // Show welcome popup on first load (if needed)
-  // Removed welcome popup functionality as requested
-  document.getElementById('hamburgerMenu')?.addEventListener('click', toggleSideNav);
-  document.getElementById('closeNav')?.addEventListener('click', closeSideNav);
-  document.getElementById('navOverlay')?.addEventListener('click', closeSideNav);
-  document.getElementById('balanceBtn')?.addEventListener('click', () => showPage('addFundsPage'));
-  document.getElementById('userAvatar')?.addEventListener('click', () => showPage('userProfilePage'));
-  document.getElementById('darkModeToggle')?.addEventListener('click', toggleDarkMode);
-  document.getElementById('serviceSelect')?.addEventListener('change', handleServiceChange);
-  document.getElementById('packageSelect')?.addEventListener('change', handlePackageChange);
-  document.getElementById('searchService')?.addEventListener('input', setupSearchFunctionality);
-  document.getElementById('quantityInput')?.addEventListener('input', function() {
-      calculateTotal();
-      updatePlaceOrderButtonState();
-      showCouponSection();
-  });
-
-  document.getElementById('couponInput')?.addEventListener('input', validateCoupon);
-  document.getElementById('placeOrderBtn')?.addEventListener('click', handlePlaceOrder);
-  document.getElementById('linkInput')?.addEventListener('input', validateLink);
-  document.getElementById('termsCheckbox')?.addEventListener('change', updatePlaceOrderButtonState);
-  setupCustomDropdowns();
-  setupNavigationListeners();
-  loadDarkModePreference();
-  setupSearchFunctionality();
-  initializeAIChatListeners();
-  setupProfileFunctionality();
-
-  // Ensure scrolling works properly on load
-  forceEnableScrolling();
-  console.log('Website loaded successfully - all functionality enabled');
-});
+// Removed duplicate DOMContentLoaded listener - using the one at the end of file
 
 // Profile functionality
 function setupProfileFunctionality() {
   // Profile functions would go here
-  console.log('Profile functionality initialized');
+
 }
 
 function updateProfileStats() {
@@ -1184,6 +1573,24 @@ function updateProfileStats() {
     statsElements[1].textContent = `₹${profileStats.totalSpent.toFixed(0)}`;
     statsElements[2].textContent = `₹${profileStats.currentBalance.toFixed(0)}`;
     statsElements[3].textContent = `${profileStats.successRate}%`;
+  }
+  
+  // Update profile joining date
+  updateProfileJoiningDate();
+}
+
+function updateProfileJoiningDate() {
+  const firstVisitDate = localStorage.getItem('indiasp_first_visit_date');
+  if (!firstVisitDate) return;
+  
+  // Find profile page joining date element and update it with correct date
+  const profileMemberSince = document.querySelector('#userProfilePage .profile-info p');
+  if (profileMemberSince && profileMemberSince.textContent.includes('Member since')) {
+    const date = new Date(firstVisitDate.split(' ')[0].split('-').reverse().join('-'));
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const formattedDate = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    profileMemberSince.textContent = `Member since ${formattedDate}`;
   }
 }
 
@@ -1235,7 +1642,7 @@ function forceEnableScrolling() {
       page.style.setProperty('max-height', 'none', 'important');
   });
 
-  console.log('Emergency scroll fix applied - scrolling should work now');
+
 }
 
 // Make function available globally for debugging
@@ -1309,7 +1716,7 @@ function fixScrollingIssues() {
       }
   });
 
-  console.log('Scrolling issues fixed - page should scroll normally now');
+
 }
 // Welcome popup completely disabled and removed
 function validateLink() {
@@ -1409,7 +1816,11 @@ function validateCoupon() {
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDarkMode = document.body.classList.contains('dark-mode');
-  localStorage.setItem('dark-mode', isDarkMode);
+  try {
+    localStorage.setItem('dark-mode', isDarkMode);
+  } catch (error) {
+    console.warn('Cannot save dark mode preference');
+  }
   const icon = document.querySelector('#darkModeToggle i');
   if (icon) {
       if (isDarkMode) {
@@ -1420,7 +1831,12 @@ function toggleDarkMode() {
   }
 }
 function loadDarkModePreference() {
-  const darkMode = localStorage.getItem('dark-mode');
+  let darkMode = null;
+  try {
+    darkMode = localStorage.getItem('dark-mode');
+  } catch (error) {
+    // Silently continue when localStorage is not available
+  }
   if (darkMode === 'true') {
       document.body.classList.add('dark-mode');
       const icon = document.querySelector('#darkModeToggle i');
@@ -1534,113 +1950,287 @@ function updateRemainingText(language, langContent) {
     });
 }
 
-function initializeLanguageSystem() {
-    // Get saved language preference or default to English
-    const savedLanguage = localStorage.getItem('preferredLanguage') || 'english';
+// Enhanced Language Selector Data
+const LANGUAGE_DATA = {
+    'english': { flag: '🇺🇸', name: 'English', nativeName: 'English' },
+    'hindi': { flag: '🇮🇳', name: 'Hindi', nativeName: 'हिंदी (Hindi)' },
+    'spanish': { flag: '🇪🇸', name: 'Spanish', nativeName: 'Español' },
+    'french': { flag: '🇫🇷', name: 'French', nativeName: 'Français' },
+    'german': { flag: '🇩🇪', name: 'German', nativeName: 'Deutsch' },
+    'italian': { flag: '🇮🇹', name: 'Italian', nativeName: 'Italiano' },
+    'portuguese': { flag: '🇧🇷', name: 'Portuguese', nativeName: 'Português' },
+    'russian': { flag: '🇷🇺', name: 'Russian', nativeName: 'Русский' },
+    'chinese': { flag: '🇨🇳', name: 'Chinese', nativeName: '中文' },
+    'japanese': { flag: '🇯🇵', name: 'Japanese', nativeName: '日本語' },
+    'korean': { flag: '🇰🇷', name: 'Korean', nativeName: '한국어' },
+    'arabic': { flag: '🇸🇦', name: 'Arabic', nativeName: 'العربية' },
+    'dutch': { flag: '🇳🇱', name: 'Dutch', nativeName: 'Nederlands' },
+    'polish': { flag: '🇵🇱', name: 'Polish', nativeName: 'Polski' },
+    'turkish': { flag: '🇹🇷', name: 'Turkish', nativeName: 'Türkçe' },
+    'swedish': { flag: '🇸🇪', name: 'Swedish', nativeName: 'Svenska' },
+    'norwegian': { flag: '🇳🇴', name: 'Norwegian', nativeName: 'Norsk' },
+    'danish': { flag: '🇩🇰', name: 'Danish', nativeName: 'Dansk' },
+    'finnish': { flag: '🇫🇮', name: 'Finnish', nativeName: 'Suomi' },
+    'greek': { flag: '🇬🇷', name: 'Greek', nativeName: 'Ελληνικά' },
+    'hebrew': { flag: '🇮🇱', name: 'Hebrew', nativeName: 'עברית' },
+    'thai': { flag: '🇹🇭', name: 'Thai', nativeName: 'ไทย' }
+};
 
-    // Set the language select dropdown to the saved/default language
+function initializeNativeLanguageSelector() {
     const languageSelect = document.getElementById('languageSelect');
-    if (languageSelect) {
-        languageSelect.value = savedLanguage;
-        languageSelect.addEventListener('change', function() {
+    
+    if (!languageSelect) return;
+    
+    // Get saved language preference
+    let savedLanguage = 'english';
+    try {
+        savedLanguage = localStorage.getItem('indiasp_selected_language') || 'english';
+    } catch (error) {
+        savedLanguage = 'english';
+    }
+    
+    // Set the saved language value
+    languageSelect.value = savedLanguage;
+    
+    // Apply the language immediately (only for Hindi/English)
+    if (savedLanguage === 'hindi' || savedLanguage === 'english') {
+        updateLanguage(savedLanguage);
+    }
+    
+    // Add change event listener
+    languageSelect.addEventListener('change', function() {
+        const selectedLang = this.value;
+        
+        // Only apply language change for Hindi and English
+        if (selectedLang === 'hindi' || selectedLang === 'english') {
+            updateLanguage(selectedLang);
+        } else {
+            // Save selection but don't apply translation
+            try {
+                localStorage.setItem('indiasp_selected_language_display', selectedLang);
+            } catch (error) {
+                // Continue silently
+            }
+            
+            // Show notification for other languages
+            const optionText = this.options[this.selectedIndex].text;
+            const languageName = optionText.split(' ').slice(1).join(' ');
+            showNotification(`${languageName} language selected! Currently only English and Hindi translations are available.`, 'info');
+        }
+    });
+}
+
+function initializeLanguageSystem() {
+    // Initialize native language selector
+    initializeNativeLanguageSelector();
+    
+    // Get saved language preference or default to English with error handling
+    let savedLanguage = 'english';
+    try {
+        savedLanguage = localStorage.getItem('indiasp_selected_language') || 'english';
+    } catch (error) {
+        // Silently use default language when localStorage is not available
+        savedLanguage = 'english';
+    }
+
+    // Set profile language select dropdown
+    const profileLanguageSelect = document.getElementById('profileLanguageSelect');
+    
+    if (profileLanguageSelect) {
+        profileLanguageSelect.value = savedLanguage;
+        profileLanguageSelect.addEventListener('change', function() {
             updateLanguage(this.value);
+            // Also update the main language selector
+            const mainLanguageSelect = document.getElementById('languageSelect');
+            if (mainLanguageSelect) {
+                mainLanguageSelect.value = this.value;
+            }
         });
     }
 
-    // Apply the language immediately
-    updateLanguage(savedLanguage);
+    // Apply the language immediately (only for Hindi/English)
+    if (savedLanguage === 'hindi' || savedLanguage === 'english') {
+        updateLanguage(savedLanguage);
+    }
 }
+// Cached search data for instant results
+let searchCache = new Map();
+let allServicesData = null;
+
 function setupSearchFunctionality() {
   const searchInput = document.getElementById('searchService');
   const searchOptions = document.getElementById('searchOptions');
-  if (searchInput && searchOptions) {
-      searchInput.addEventListener('input', function() {
-          const query = this.value.toLowerCase().trim();
-          if (query.length === 0) {
-              searchOptions.innerHTML = '';
-              searchOptions.classList.remove('active');
-              return;
-          }
-          const allServices = [];
-          Object.entries(servicePackages).forEach(([category, services]) => {
-              services.forEach(service => {
-                  allServices.push({
-                      ...service,
-                      category: category
-                  });
-              });
-          });
-          const filteredServices = allServices.filter(service => {
-              const serviceName = service.name.toLowerCase();
-              const serviceCategory = getServiceDisplayName(service.category).toLowerCase();
-              const firstLetterMatch = serviceName.startsWith(query.charAt(0));
-              const nameMatch = serviceName.includes(query);
-              const categoryMatch = serviceCategory.includes(query);
-              return firstLetterMatch || nameMatch || categoryMatch;
-          }).sort((a, b) => {
-              const aStartsWith = a.name.toLowerCase().startsWith(query);
-              const bStartsWith = b.name.toLowerCase().startsWith(query);
-              if (aStartsWith && !bStartsWith) return -1;
-              if (!aStartsWith && bStartsWith) return 1;
-              return a.name.localeCompare(b.name);
-          });
-          searchOptions.innerHTML = '';
-          if (filteredServices.length > 0) {
-              filteredServices.slice(0, 15).forEach(service => {
-                  const option = document.createElement('div');
-                  option.className = 'package-option search-result';
-                  option.dataset.service = service.category;
-                  option.dataset.package = JSON.stringify(service);
-                  const priceText = service.priceType === 'per_k' 
-                      ? `₹${service.price}/1k${service.unit ? ` ${service.unit}` : ''}`
-                      : `₹${service.price}${service.unit ? ` ${service.unit}` : ''}`;
-                  const { icon, iconClass } = getPackageIconAndType(service.name, service.price);
-                  option.innerHTML = `
-                      <div class="package-icon ${iconClass}">
-                          <i class="${icon}"></i>
-                      </div>
-                      <div class="package-content">
-                          <div class="package-info">
-                              <div class="package-name">ID: ${service.id} - ${service.name}</div>
-                              <div class="package-desc">${service.desc}</div>
-                              <div class="service-category">${getServiceDisplayName(service.category)}</div>
-                          </div>
-                          <div class="package-price">${priceText}</div>
-                      </div>
-                  `;
-                  option.addEventListener('click', function() {
-                      selectedService = service.category;
-                      selectedPackage = service;
-                      const serviceSelected = document.getElementById('serviceSelected');
-                      if (serviceSelected) {
-                          const serviceIcon = document.querySelector(`[data-value="${service.category}"] .service-icon`);
-                          const iconHTML = serviceIcon ? serviceIcon.outerHTML : '<i class="fas fa-cog"></i>';
-                          serviceSelected.querySelector('.selected-text').innerHTML = 
-                              iconHTML + ' ' + getServiceDisplayName(service.category);
-                      }
-                      populatePackages(service.category);
-                      setTimeout(() => {
-                          selectPackageByServiceId(service.id);
-                      }, 100);
-                      searchInput.value = '';
-                      searchOptions.innerHTML = '';
-                      searchOptions.classList.remove('active');
-                      showNotification('Service and package selected successfully!', 'success');
-                  });
-                  searchOptions.appendChild(option);
-              });
-              searchOptions.classList.add('active');
-          } else {
-              searchOptions.innerHTML = '<div class="no-results">कोई सेवा नहीं मिली / No services found</div>';
-              searchOptions.classList.add('active');
-          }
+  if (!searchInput || !searchOptions) return;
+
+  // Pre-build services data once
+  if (!allServicesData) {
+    allServicesData = [];
+    Object.entries(servicePackages).forEach(([category, services]) => {
+      services.forEach(service => {
+        allServicesData.push({
+          ...service,
+          category: category,
+          searchText: `${service.name} ${service.desc || ''} ${getServiceDisplayName(category)}`.toLowerCase()
+        });
       });
-      document.addEventListener('click', function(e) {
-          if (!e.target.closest('.search-section')) {
-              searchOptions.classList.remove('active');
-          }
-      });
+    });
   }
+
+  // Ultra-fast search with instant typing response
+  function performSearch(query) {
+    if (!query) {
+      searchOptions.innerHTML = '';
+      searchOptions.classList.remove('active');
+      return;
+    }
+
+    // Check cache first
+    if (searchCache.has(query)) {
+      renderSearchResults(searchCache.get(query), searchOptions, searchInput);
+      return;
+    }
+
+    // Fast filter using pre-built search text
+    const filteredServices = allServicesData.filter(service => 
+      service.searchText.includes(query)
+    ).sort((a, b) => {
+      const aStartsWith = a.name.toLowerCase().startsWith(query);
+      const bStartsWith = b.name.toLowerCase().startsWith(query);
+      if (aStartsWith && !bStartsWith) return -1;
+      if (!aStartsWith && bStartsWith) return 1;
+      return a.name.localeCompare(b.name);
+    }).slice(0, 10); // Reduced to 10 for faster rendering
+
+    // Cache the result
+    searchCache.set(query, filteredServices);
+
+    // Clear cache if it gets too large
+    if (searchCache.size > 100) {
+      const firstKey = searchCache.keys().next().value;
+      searchCache.delete(firstKey);
+    }
+
+    renderSearchResults(filteredServices, searchOptions, searchInput);
+  }
+
+  // Use immediate execution + debounce hybrid with better performance
+  let searchTimeout;
+  searchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase().trim();
+
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+
+    // Execute immediately for first few characters
+    if (query.length <= 2) {
+      performSearch(query);
+      return;
+    }
+
+    // Ultra-fast debounce for longer queries
+    searchTimeout = safeSetTimeout(() => performSearch(query), 50);
+  });
+
+  // Optimized click outside handler with delegation
+  document.addEventListener('click', function(e) {
+    if (!searchOptions.contains(e.target) && !searchInput.contains(e.target)) {
+      searchOptions.classList.remove('active');
+    }
+  }, { passive: true, capture: true });
+}
+
+function renderSearchResults(filteredServices, searchOptions, searchInput) {
+  if (filteredServices.length === 0) {
+    searchOptions.innerHTML = '<div class="no-results">कोई सेवा नहीं मिली / No services found</div>';
+    searchOptions.classList.add('active');
+    return;
+  }
+
+  // Use DocumentFragment for faster DOM manipulation
+  const fragment = document.createDocumentFragment();
+
+  filteredServices.forEach(service => {
+    const option = document.createElement('div');
+    option.className = 'package-option search-result';
+    option.dataset.service = service.category;
+    option.dataset.package = JSON.stringify(service);
+
+    const priceText = service.priceType === 'per_k' 
+      ? `₹${service.price}/1k${service.unit ? ` ${service.unit}` : ''}`
+      : `₹${service.price}${service.unit ? ` ${service.unit}` : ''}`;
+
+    const { icon, iconClass } = getPackageIconAndType(service.name, service.price);
+
+    option.innerHTML = `
+      <div class="package-icon ${iconClass}">
+        <i class="${icon}"></i>
+      </div>
+      <div class="package-content">
+        <div class="package-info">
+          <div class="package-name">ID: ${service.id} - ${service.name}</div>
+          <div class="package-desc">${service.desc}</div>
+          <div class="service-category">${getServiceDisplayName(service.category)}</div>
+        </div>
+        <div class="package-price">${priceText}</div>
+      </div>
+    `;
+
+    // Use event delegation for better performance - attach to searchOptions instead
+    option.dataset.serviceId = service.id;
+    option.dataset.serviceCategory = service.category;
+
+    fragment.appendChild(option);
+  });
+
+  searchOptions.innerHTML = '';
+  searchOptions.appendChild(fragment);
+  searchOptions.classList.add('active');
+}
+
+// Global event delegation for ultra-fast button response
+function setupGlobalEventDelegation() {
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('.search-result');
+    if (target) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const serviceId = parseInt(target.dataset.serviceId);
+      const serviceCategory = target.dataset.serviceCategory;
+
+      // Find service data from cache
+      const service = allServicesData.find(s => s.id === serviceId);
+      if (!service) return;
+
+      selectedService = serviceCategory;
+      selectedPackage = service;
+
+      const serviceSelected = document.getElementById('serviceSelected');
+      if (serviceSelected) {
+        const serviceIcon = document.querySelector(`[data-value="${serviceCategory}"] .service-icon`);
+        const iconHTML = serviceIcon ? serviceIcon.outerHTML : '<i class="fas fa-cog"></i>';
+        serviceSelected.querySelector('.selected-text').innerHTML = 
+          iconHTML + ' ' + getServiceDisplayName(serviceCategory);
+      }
+
+      populatePackages(serviceCategory);
+      requestAnimationFrame(() => {
+        selectPackageByServiceId(serviceId);
+      });
+
+      // Clear search
+      const searchInput = document.getElementById('searchService');
+      const searchOptions = document.getElementById('searchOptions');
+      if (searchInput) searchInput.value = '';
+      if (searchOptions) {
+        searchOptions.innerHTML = '';
+        searchOptions.classList.remove('active');
+      }
+
+      showNotification('Service and package selected successfully!', 'success');
+      return;
+    }
+  }, { passive: false, capture: true });
 }
 function getServiceDisplayName(category) {
   const serviceNames = {
@@ -1952,8 +2542,12 @@ const timerExpiredKeyframes = `
 if (!document.querySelector('#timer-expiration-styles')) {
   const style = document.createElement('style');
   style.id = 'timer-expiration-styles';
-  style.textContent = timerExpiredKeyframes;
-  document.head.appendChild(style);
+  if (style && timerExpiredKeyframes) {
+    style.textContent = timerExpiredKeyframes;
+  }
+  if (document.head && style) {
+    document.head.appendChild(style);
+  }
 }
 
 function updateTimerDisplay(element, seconds) {
@@ -2578,8 +3172,8 @@ function setupCustomDropdowns() {
               const text = option.querySelector('span').firstChild.textContent;
               const icon = option.querySelector('.service-icon').outerHTML;
               serviceSelected.querySelector('.selected-text').innerHTML = icon + ' ' + text;
-              const serviceSelect = document.getElementById('serviceSelect');
-              serviceSelect.value = value;
+              // Update selected service value directly
+              // Note: No hidden select element needed for this dropdown
               selectedService = value;
               serviceOptions.classList.remove('active');
               serviceSelected.classList.remove('active');
@@ -2696,6 +3290,9 @@ function closeSideNav() {
   }
 }
 function showPage(pageId) {
+  // Clear any running timers when changing pages for better performance
+  clearAllTimers();
+
   const pages = document.querySelectorAll('.page');
   pages.forEach(page => page.classList.remove('active'));
   const targetPage = document.getElementById(pageId);
@@ -2710,6 +3307,12 @@ function showPage(pageId) {
       showPage('orderHistoryPage');
       return;
   }
+
+  // Close side navigation when showing a page
+  closeSideNav();
+
+  // Force enable scrolling and scroll to top
+  forceEnableScrolling();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function updateRefillHistoryPage() {
@@ -2844,11 +3447,10 @@ function updateRefillHistoryPage() {
   }
 }
 function handleServiceChange() {
-  const serviceSelect = document.getElementById('serviceSelect');
   const packageSelect = document.getElementById('packageSelect');
   const priceSection = document.getElementById('priceSection');
-  if (!serviceSelect || !packageSelect || !priceSection) return;
-  const selectedValue = selectedService || serviceSelect.value;
+  if (!packageSelect || !priceSection) return;
+  const selectedValue = selectedService;
   packageSelect.innerHTML = '<option value="">Select Package</option>';
   priceSection.classList.add('hidden');
   const packageSelected = document.getElementById('packageSelected');
@@ -2900,7 +3502,7 @@ function updateDynamicDescription() {
       calculatedPrice = selectedPackage.price;
   }
   const dynamicDescription = `
-      <p><strong>🚀 ${selectedPackage.name} - Only ₹${calculatedPrice.toFixed(2)} with instant delivery + 365 day guarantee!</strong></p>
+      <p><strong>🚀 ${selectedPackage.name} - Only ${formatPrice(convertPrice(calculatedPrice))} with instant delivery + 365 day guarantee!</strong></p>
       <p><strong>⏰ Service Delivery Time:</strong></p>
       <p>⚡ Start: <strong>0-15 minutes</strong> | 🚀 Speed: <strong>100K per day</strong></p>
       <p>👥 Quality: <strong>Real accounts</strong> | 💧 Drop rate: <strong>Maximum 10%</strong></p>
@@ -2933,7 +3535,9 @@ function calculateTotal() {
   } else {
       total = selectedPackage.price;
   }
-  totalAmount.textContent = total.toFixed(2);
+  // Display price in selected currency with symbol
+  const convertedTotal = convertPrice(total);
+  totalAmount.textContent = formatPrice(convertedTotal);
   updateDynamicDescription();
   if (balanceError) {
       if (total > 0) {
@@ -2946,7 +3550,10 @@ function calculateTotal() {
 function handleSearch() {
 }
 function showDashboard() {
-  document.getElementById('userAvatar').textContent = 'A';
+  const userAvatar = getCachedElement('userAvatar');
+  if (userAvatar) {
+    userAvatar.textContent = 'A';
+  }
 }
 function updateBalanceDisplay() {
   document.querySelectorAll('.balance-display, .balance-amount').forEach(display => {
@@ -3283,8 +3890,8 @@ function showAddFundsQRCode(amount) {
                   ">Scan with any UPI app to add ₹${amount.toFixed(2)} to your wallet</div>
               </div>
 
-              <!-- Cancel Button -->
-              <button onclick="closeAddFundsQRModal()" style="
+              <!-- Cancel Transaction Button -->
+              <button onclick="showQRCancelConfirmation()" style="
                   width: 100%;
                   background: #dc3545;
                   color: white;
@@ -3295,7 +3902,7 @@ function showAddFundsQRCode(amount) {
                   font-weight: 600;
                   font-size: 16px;
                   transition: all 0.2s ease;
-              ">Back to Add Funds</button>
+              ">Cancel Transaction</button>
           </div>
       </div>
   `;
@@ -3304,6 +3911,8 @@ function showAddFundsQRCode(amount) {
 
   window.generateAddFundsQR = function(amount) {
       const qrContainer = document.getElementById('addFundsQrCodeContainer');
+      const generateButton = document.querySelector('button[onclick="generateAddFundsQR(' + amount + ')"]');
+      
       if (qrContainer) {
           const upiID = 'kavita.5049-49@waicici';
           const note = `Add Funds - India Social Panel`;
@@ -3330,7 +3939,22 @@ function showAddFundsQRCode(amount) {
               </div>
           `;
 
+          // Hide the generate button after QR code is created
+          if (generateButton) {
+              generateButton.style.display = 'none';
+          }
+
           showNotification('✅ QR Code generated! Scan to add funds', 'success');
+      }
+  };
+
+  window.showQRCancelConfirmation = function() {
+      if (confirm('Are you sure you want to cancel this transaction? You will be redirected to Add Funds page.')) {
+          if (qrModal && qrModal.parentElement) {
+              document.body.removeChild(qrModal);
+          }
+          showPage('addFundsPage');
+          showNotification('Transaction cancelled successfully', 'info');
       }
   };
 
@@ -3718,7 +4342,7 @@ function showPaymentPage(order) {
       'justify-content: center;' +
       'padding: 10px;' +
       'overflow-y: auto;';
-  
+
   paymentModal.innerHTML = '<div class="payment-container" style="width: 100%; max-width: 450px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: auto; max-height: 95vh; overflow-y: auto;">' +
       '<div class="payment-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; text-align: center;">' +
           '<h1 style="font-size: 22px; margin-bottom: 8px;">🎉 Order Placed Successfully!</h1>' +
@@ -3996,27 +4620,7 @@ function showPaymentPage(order) {
           </div>
       </div>
   `;
-  window.closePaymentModal = function() {
-      showCancelConfirmationPopup(() => {
-          if (paymentModal && paymentModal.parentElement) {
-              document.body.removeChild(paymentModal);
-          }
-          document.body.style.overflow = 'auto';
-          showPage('dashboardHome');
-      });
-  };
-  window.showUPIAppsPayment = function() {
-      showUPIAppsModal(order);
-  };
-  window.showQRCodePayment = function() {
-      showQRCodeModal(order);
-  };
-  window.showUPIIDPayment = function() {
-      showUPIIDModal(order);
-  };
-  window.showCardBankingPayment = function() {
-      showCardBankingModal(order);
-  };
+
   paymentModal.addEventListener('click', function(e) {
       if (e.target === paymentModal) {
           window.closePaymentModal();
@@ -4221,6 +4825,34 @@ function showCancelConfirmationPopup(onConfirm) {
       document.body.removeChild(confirmationModal);
     }
     document.body.style.overflow = 'auto';
+    
+    // Close all payment related modals when cancellation is confirmed
+    const paymentModal = document.getElementById('paymentModal');
+    const upiAppsModal = document.getElementById('upiAppsModal');
+    const qrCodeModal = document.getElementById('qrCodeModal');
+    const upiIdModal = document.getElementById('upiIdModal');
+    const creditCardModal = document.getElementById('creditCardModal');
+    
+    if (paymentModal && paymentModal.parentElement) {
+      document.body.removeChild(paymentModal);
+    }
+    if (upiAppsModal && upiAppsModal.parentElement) {
+      document.body.removeChild(upiAppsModal);
+    }
+    if (qrCodeModal && qrCodeModal.parentElement) {
+      document.body.removeChild(qrCodeModal);
+    }
+    if (upiIdModal && upiIdModal.parentElement) {
+      document.body.removeChild(upiIdModal);
+    }
+    if (creditCardModal && creditCardModal.parentElement) {
+      document.body.removeChild(creditCardModal);
+    }
+    
+    // Navigate to dashboard home page
+    showPage('dashboardHome');
+    forceEnableScrolling();
+    
     onConfirm();
   };
 
@@ -4529,24 +5161,26 @@ function showUPIAppsModal(order) {
       }
       timeLeft--;
   }, 1000);
+  activeIntervals.push(timerInterval);
   window.openUPIApp = function(app) {
       const upiID = 'kavita.5049-49@waicici'; // Correct UPI ID from copy function
       const amount = order.price.toFixed(2);
       const note = `Payment for Order ${order.id} - India Social Panel`;
-      
+
       let upiUrl = '';
-      
+
       // Generate app-specific UPI URLs for better compatibility
       switch(app.toLowerCase()) {
           case 'googlepay':
               // Google Pay specific URL format
               upiUrl = `tez://upi/pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
               // Fallback to generic UPI URL if Google Pay not installed
-              setTimeout(() => {
+              const fallbackTimer = setTimeout(() => {
                   window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
               }, 1000);
+              activeTimers.add(fallbackTimer);
               break;
-              
+
           case 'phonepe':
               // PhonePe specific URL format
               upiUrl = `phonepe://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
@@ -4555,7 +5189,7 @@ function showUPIAppsModal(order) {
                   window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
               }, 1000);
               break;
-              
+
           case 'paytm':
               // Paytm specific URL format
               upiUrl = `paytmmp://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
@@ -4564,14 +5198,14 @@ function showUPIAppsModal(order) {
                   window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
               }, 1000);
               break;
-              
+
           case 'other':
           default:
               // Generic UPI URL that works with all UPI apps
               upiUrl = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
               break;
       }
-      
+
       // Try to open the app-specific URL first
       try {
           window.location.href = upiUrl;
@@ -4581,7 +5215,7 @@ function showUPIAppsModal(order) {
           window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
           showNotification(`✅ Opening UPI App... Amount ₹${amount} pre-filled`, 'success');
       }
-      
+
       // Give user time to complete payment then return to dashboard
       setTimeout(() => {
           clearInterval(timerInterval);
@@ -4593,8 +5227,13 @@ function showUPIAppsModal(order) {
       showCancelConfirmationPopup(() => {
           clearInterval(timerInterval);
           closeUPIModal();
-          // Close payment modal completely
+          // Close payment modal completely and return to home
           const paymentModal = document.getElementById('paymentModal');
+          if (paymentModal && paymentModal.parentElement) {
+              document.body.removeChild(paymentModal);
+          }
+          // Return to dashboard home page
+          showPage('dashboardHome');
           if (paymentModal && paymentModal.parentElement) {
               document.body.removeChild(paymentModal);
           }
@@ -5478,7 +6117,12 @@ function updateProfileStats() {
   }
 }
 function setupProfileFunctionality() {
-  const savedName = localStorage.getItem('userName');
+  let savedName = null;
+  try {
+    savedName = localStorage.getItem('userName');
+  } catch (error) {
+    // Silently continue when localStorage is not available
+  }
   if (savedName) {
       const profileNameInput = document.querySelector('input[placeholder="Enter your full name"]');
       const profileDisplayName = document.getElementById('profileDisplayName');
@@ -5499,11 +6143,19 @@ function setupProfileFunctionality() {
           if (name) {
               if (profileDisplayName) profileDisplayName.textContent = name;
               if (userAvatar) userAvatar.textContent = name.charAt(0).toUpperCase();
-              localStorage.setItem('userName', name);
+              try {
+                localStorage.setItem('userName', name);
+              } catch (error) {
+                console.warn('Cannot save user name');
+              }
           } else {
               if (profileDisplayName) profileDisplayName.textContent = 'Enter Your Name';
               if (userAvatar) userAvatar.textContent = 'A';
-              localStorage.removeItem('userName');
+              try {
+                localStorage.removeItem('userName');
+              } catch (error) {
+                console.warn('Cannot remove user name');
+              }
           }
       });
   }
@@ -5719,11 +6371,21 @@ function showPaymentMethodOptions() {
 
 function addPaymentMethodToList(type, details, icon) {
   const paymentMethodsList = document.getElementById('paymentMethodsList');
-  const savedMethods = JSON.parse(localStorage.getItem('paymentMethods') || '[]');
+  let savedMethods = [];
+  try {
+    savedMethods = JSON.parse(localStorage.getItem('paymentMethods') || '[]');
+  } catch (error) {
+    console.warn('Cannot access payment methods');
+    savedMethods = [];
+  }
 
   const newMethod = { type, details, icon, id: Date.now() };
   savedMethods.push(newMethod);
-  localStorage.setItem('paymentMethods', JSON.stringify(savedMethods));
+  try {
+    localStorage.setItem('paymentMethods', JSON.stringify(savedMethods));
+  } catch (error) {
+    console.warn('Cannot save payment methods');
+  }
 
   loadUserPaymentMethods();
 }
@@ -6048,3 +6710,182 @@ function getPackageIconAndType(packageName, price) {
       badge: price > 10000 ? { type: 'premium', text: 'Premium' } : null
   };
 }
+
+// =================== ENHANCEMENT FUNCTIONS ===================
+
+// 5. Enhanced Order History Functions
+function copyOrderId(orderId) {
+    navigator.clipboard.writeText(orderId).then(() => {
+        showNotification(`Order ID ${orderId} copied to clipboard!`, 'success');
+    }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = orderId;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showNotification(`Order ID ${orderId} copied to clipboard!`, 'success');
+    });
+}
+
+function viewOrderDetails(orderId) {
+    showNotification(`Viewing details for order ${orderId}`, 'info');
+    // This would typically show a detailed order modal
+    // For now, we'll just show a notification
+}
+
+// 6. Enhanced UPI Payment Functions
+function showUPIOptions() {
+    const upiAppsGrid = document.getElementById('upiAppsGrid');
+    if (upiAppsGrid) {
+        const isVisible = upiAppsGrid.style.display !== 'none';
+        upiAppsGrid.style.display = isVisible ? 'none' : 'block';
+        
+        if (!isVisible) {
+            // Scroll into view
+            upiAppsGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+}
+
+function openUPIApp(appName) {
+    const amount = document.getElementById('amountInput')?.value || '0';
+    const amountInINR = currentCurrency !== 'inr' ? Math.round(parseFloat(amount) / CURRENCY_RATES[currentCurrency].rate) : parseFloat(amount);
+    
+    // UPI ID - using the embedded Kavita UPI ID
+    const upiId = 'kavita.5049-49@waicici';
+    const merchantName = 'India Social Panel';
+    
+    // UPI URL format: upi://pay?pa=UPI_ID&pn=MERCHANT_NAME&am=AMOUNT&cu=INR&tn=TRANSACTION_NOTE
+    const transactionNote = `Add Funds - India Social Panel`;
+    
+    const upiUrls = {
+        'gpay': `tez://upi/pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
+        'phonepe': `phonepe://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
+        'paytm': `paytmmp://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
+        'bhim': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
+        'amazonpay': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
+        'whatsapp': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`
+    };
+    
+    const fallbackUrl = `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`;
+    
+    if (amountInINR < 1) {
+        showNotification('Please enter a valid amount to proceed with payment', 'error');
+        return;
+    }
+    
+    // Attempt to open the specific UPI app
+    const upiUrl = upiUrls[appName] || fallbackUrl;
+    
+    // For mobile devices, try to open the UPI app
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        window.location.href = upiUrl;
+        
+        // Fallback notification
+        safeSetTimeout(() => {
+            showNotification(`Opening ${getAppDisplayName(appName)}... If the app doesn't open, please ensure it's installed on your device.`, 'info');
+        }, 1000);
+    } else {
+        // For desktop, show QR code or instructions
+        showQRCodeForUPI(upiId, amountInINR, appName);
+    }
+    
+    showNotification(`Initiating payment of ₹${amountInINR} via ${getAppDisplayName(appName)}`, 'success');
+}
+
+function getAppDisplayName(appName) {
+    const names = {
+        'gpay': 'Google Pay',
+        'phonepe': 'PhonePe',
+        'paytm': 'Paytm',
+        'bhim': 'BHIM',
+        'amazonpay': 'Amazon Pay',
+        'whatsapp': 'WhatsApp Pay'
+    };
+    return names[appName] || 'UPI App';
+}
+
+function showQRCodeForUPI(upiId, amount, appName) {
+    // This would generate and show a QR code for desktop users
+    // For now, we'll show the UPI ID and amount
+    const message = `
+        UPI Payment Details:
+        UPI ID: ${upiId}
+        Amount: ₹${amount}
+        
+        Scan QR code with ${getAppDisplayName(appName)} or any UPI app to pay.
+    `;
+    showNotification(message, 'info');
+}
+
+// 7. Initialize All Enhancement Features
+function initializeAllEnhancements() {
+    // Initialize first visit tracking
+    initializeFirstVisitTracking();
+    
+    // Initialize currency system
+    initializeCurrencySystem();
+    
+    // Update price displays
+    updateAllPricesDisplay();
+    
+    console.log('🚀 All enhancement features initialized successfully!');
+}
+
+// Enhanced DOMContentLoaded Event - Include new initializations
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 India Social Panel - Ultra-fast initialization starting...');
+    
+    // Start performance monitoring immediately
+    startPerformanceMonitoring();
+
+    // Force enable scrolling first - critical for UX
+    forceEnableScrolling();
+
+    // Ultra-fast initialization using requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+        // Initialize core systems first
+        initializeLanguageSystem();
+        updateBalanceDisplay();
+        showDashboard();
+
+        // Setup optimized event listeners immediately
+        setupOptimizedEventListeners();
+        setupGlobalEventDelegation();
+
+        // Batch remaining initializations for better performance
+        requestAnimationFrame(() => {
+            setupCustomDropdowns();
+            setupNavigationListeners();
+            loadDarkModePreference();
+            setupSearchFunctionality();
+            setupServiceItemClickHandlers();
+            calculateTotal();
+
+            // Final batch - less critical items
+            requestAnimationFrame(() => {
+                initializeEmailJS();
+                initializeAIChatListeners();
+                setupProfileFunctionality();
+
+                // Initialize new enhancement features
+                initializeAllEnhancements();
+
+                // Final scrolling check
+                forceEnableScrolling();
+
+                console.log('🚀 India Social Panel - Ultra-fast initialization complete!');
+            });
+        });
+    });
+});
+
+// Global function to ensure compatibility
+window.closeFirstTimeWelcome = closeFirstTimeWelcome;
+window.copyOrderId = copyOrderId;
+window.viewOrderDetails = viewOrderDetails;
+window.showUPIOptions = showUPIOptions;
+window.openUPIApp =openUPIApp;
+window.changeCurrency = changeCurrency;
