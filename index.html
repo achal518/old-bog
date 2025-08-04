@@ -343,7 +343,7 @@
                 <div class="news-section">
                     <h3>📰 LATEST NEWS</h3>
                     <div class="news-item">
-                        <div class="news-date">2025-05-21 13:01:03</div>
+                        <div class="news-date" id="userFirstVisitDate">Loading...</div>
                         <div class="news-content">
                             <h4 id="congratulationsText">🎉 Congratulations 🎉</h4>
                             <p id="membershipText">Now You are a <span class="member-text" id="memberText">Member</span> of India Social Panel.in</p>
@@ -639,18 +639,95 @@
                             <option>Cancelled</option>
                         </select>
                     </div>
-                    <div class="orders-list">
-                        <div class="order-item">
-                            <div class="order-id">#12345</div>
-                            <div class="order-service">Instagram Followers</div>
-                            <div class="order-status pending">Processing</div>
-                            <div class="order-amount">₹200.00</div>
+                    <div class="orders-list" id="enhancedOrdersList">
+                        <div class="enhanced-order-item">
+                            <div class="order-header">
+                                <div class="order-id-section">
+                                    <span class="order-id">#12345</span>
+                                    <button class="copy-btn" onclick="copyOrderId('12345')" title="Copy Order ID">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="order-status-badge processing">Processing</div>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-service">
+                                    <i class="fab fa-instagram"></i>
+                                    <span>Instagram Followers</span>
+                                </div>
+                                <div class="order-meta">
+                                    <span class="order-date">2025-08-01 12:30</span>
+                                    <span class="order-quantity">1000 followers</span>
+                                </div>
+                            </div>
+                            <div class="order-footer">
+                                <div class="order-amount" data-price="200">₹200.00</div>
+                                <div class="order-actions">
+                                    <button class="action-btn view-btn" onclick="viewOrderDetails('12345')">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="order-item">
-                            <div class="order-id">#12344</div>
-                            <div class="order-service">YouTube Views</div>
-                            <div class="order-status completed">Completed</div>
-                            <div class="order-amount">₹150.00</div>
+                        
+                        <div class="enhanced-order-item">
+                            <div class="order-header">
+                                <div class="order-id-section">
+                                    <span class="order-id">#12344</span>
+                                    <button class="copy-btn" onclick="copyOrderId('12344')" title="Copy Order ID">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="order-status-badge completed">Completed</div>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-service">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>YouTube Views</span>
+                                </div>
+                                <div class="order-meta">
+                                    <span class="order-date">2025-07-30 14:15</span>
+                                    <span class="order-quantity">5000 views</span>
+                                </div>
+                            </div>
+                            <div class="order-footer">
+                                <div class="order-amount" data-price="150">₹150.00</div>
+                                <div class="order-actions">
+                                    <button class="action-btn view-btn" onclick="viewOrderDetails('12344')">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="enhanced-order-item">
+                            <div class="order-header">
+                                <div class="order-id-section">
+                                    <span class="order-id">#12343</span>
+                                    <button class="copy-btn" onclick="copyOrderId('12343')" title="Copy Order ID">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <div class="order-status-badge completed">Completed</div>
+                            </div>
+                            <div class="order-details">
+                                <div class="order-service">
+                                    <i class="fab fa-facebook"></i>
+                                    <span>Facebook Page Likes</span>
+                                </div>
+                                <div class="order-meta">
+                                    <span class="order-date">2025-07-28 09:45</span>
+                                    <span class="order-quantity">2500 likes</span>
+                                </div>
+                            </div>
+                            <div class="order-footer">
+                                <div class="order-amount" data-price="300">₹300.00</div>
+                                <div class="order-actions">
+                                    <button class="action-btn view-btn" onclick="viewOrderDetails('12343')">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -731,14 +808,62 @@
                         <div class="payment-methods">
                             <h4>Payment Methods</h4>
 
-                            <!-- UPI Method Card -->
-                            <div class="method-card upi-card" onclick="proceedWithUPI()">
+                            <!-- Enhanced UPI Method Card -->
+                            <div class="method-card upi-card enhanced-upi" onclick="showUPIOptions()">
                                 <i class="fas fa-mobile-alt"></i>
                                 <div>
                                     <h4>UPI Payment</h4>
-                                    <p>Pay with Google Pay, PhonePe, Paytm, etc.</p>
+                                    <p>Choose your preferred UPI app</p>
                                 </div>
                                 <span class="instant-badge">⚡ Instant</span>
+                            </div>
+                            
+                            <!-- UPI Apps Grid (Initially Hidden) -->
+                            <div id="upiAppsGrid" class="upi-apps-grid" style="display: none;">
+                                <h4>Select UPI App</h4>
+                                <div class="upi-apps-container">
+                                    <button class="upi-app-btn" onclick="openUPIApp('gpay')" data-app="gpay">
+                                        <div class="upi-app-icon gpay-icon">
+                                            <i class="fab fa-google-pay"></i>
+                                        </div>
+                                        <span>Google Pay</span>
+                                    </button>
+                                    
+                                    <button class="upi-app-btn" onclick="openUPIApp('phonepe')" data-app="phonepe">
+                                        <div class="upi-app-icon phonepe-icon">
+                                            <i class="fas fa-mobile-alt"></i>
+                                        </div>
+                                        <span>PhonePe</span>
+                                    </button>
+                                    
+                                    <button class="upi-app-btn" onclick="openUPIApp('paytm')" data-app="paytm">
+                                        <div class="upi-app-icon paytm-icon">
+                                            <i class="fas fa-wallet"></i>
+                                        </div>
+                                        <span>Paytm</span>
+                                    </button>
+                                    
+                                    <button class="upi-app-btn" onclick="openUPIApp('bhim')" data-app="bhim">
+                                        <div class="upi-app-icon bhim-icon">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                        <span>BHIM</span>
+                                    </button>
+                                    
+                                    <button class="upi-app-btn" onclick="openUPIApp('amazonpay')" data-app="amazonpay">
+                                        <div class="upi-app-icon amazon-icon">
+                                            <i class="fab fa-amazon-pay"></i>
+                                        </div>
+                                        <span>Amazon Pay</span>
+                                    </button>
+                                    
+                                    <button class="upi-app-btn" onclick="openUPIApp('whatsapp')" data-app="whatsapp">
+                                        <div class="upi-app-icon whatsapp-icon">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </div>
+                                        <span>WhatsApp Pay</span>
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Other Payment Methods -->
@@ -1333,16 +1458,24 @@ print(response.json())</code></pre>
                             <h3><i class="fas fa-cog"></i> Preferences</h3>
                             <div class="profile-field">
                                 <label>Language</label>
-                                <select class="profile-input">
+                                <select class="profile-input" id="profileLanguageSelect" onchange="updateLanguage(this.value)">
                                     <option value="english" selected>English</option>
                                     <option value="hindi">Hindi</option>
                                 </select>
                             </div>
                             <div class="profile-field">
                                 <label>Currency</label>
-                                <select class="profile-input">
+                                <select class="profile-input" id="currencySelector" data-currency="true" onchange="changeCurrency(this.value)">
                                     <option value="inr" selected>Indian Rupee (₹)</option>
                                     <option value="usd">US Dollar ($)</option>
+                                    <option value="eur">Euro (€)</option>
+                                    <option value="gbp">British Pound (£)</option>
+                                    <option value="aud">Australian Dollar (A$)</option>
+                                    <option value="cad">Canadian Dollar (C$)</option>
+                                    <option value="jpy">Japanese Yen (¥)</option>
+                                    <option value="sgd">Singapore Dollar (S$)</option>
+                                    <option value="aed">UAE Dirham (د.إ)</option>
+                                    <option value="chf">Swiss Franc (CHF)</option>
                                 </select>
                             </div>
                             <div class="profile-field">
@@ -1413,9 +1546,30 @@ print(response.json())</code></pre>
                         </div>
                         <div class="support-item">
                             <i class="fas fa-language"></i>
-                            <select id="languageSelect">
-                                <option value="english" selected>English</option>
-                                <option value="hindi">Hindi</option>
+                            <span>Language</span>
+                            <select id="languageSelect" class="native-language-select" onchange="updateLanguage(this.value)">
+                                <option value="english" data-flag="🇺🇸">🇺🇸 English</option>
+                                <option value="hindi" data-flag="🇮🇳">🇮🇳 हिंदी (Hindi)</option>
+                                <option value="spanish" data-flag="🇪🇸">🇪🇸 Español</option>
+                                <option value="french" data-flag="🇫🇷">🇫🇷 Français</option>
+                                <option value="german" data-flag="🇩🇪">🇩🇪 Deutsch</option>
+                                <option value="italian" data-flag="🇮🇹">🇮🇹 Italiano</option>
+                                <option value="portuguese" data-flag="🇧🇷">🇧🇷 Português</option>
+                                <option value="russian" data-flag="🇷🇺">🇷🇺 Русский</option>
+                                <option value="chinese" data-flag="🇨🇳">🇨🇳 中文</option>
+                                <option value="japanese" data-flag="🇯🇵">🇯🇵 日本語</option>
+                                <option value="korean" data-flag="🇰🇷">🇰🇷 한국어</option>
+                                <option value="arabic" data-flag="🇸🇦">🇸🇦 العربية</option>
+                                <option value="dutch" data-flag="🇳🇱">🇳🇱 Nederlands</option>
+                                <option value="polish" data-flag="🇵🇱">🇵🇱 Polski</option>
+                                <option value="turkish" data-flag="🇹🇷">🇹🇷 Türkçe</option>
+                                <option value="swedish" data-flag="🇸🇪">🇸🇪 Svenska</option>
+                                <option value="norwegian" data-flag="🇳🇴">🇳🇴 Norsk</option>
+                                <option value="danish" data-flag="🇩🇰">🇩🇰 Dansk</option>
+                                <option value="finnish" data-flag="🇫🇮">🇫🇮 Suomi</option>
+                                <option value="greek" data-flag="🇬🇷">🇬🇷 Ελληνικά</option>
+                                <option value="hebrew" data-flag="🇮🇱">🇮🇱 עברית</option>
+                                <option value="thai" data-flag="🇹🇭">🇹🇭 ไทย</option>
                             </select>
                         </div>
                     </div>
