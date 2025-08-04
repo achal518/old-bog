@@ -8,11 +8,8 @@ body {
   font-family: 'Inter', sans-serif;
   background: linear-gradient(145deg, #4a5fb8 0%, #5a6fd8 15%, #667eea 30%, #764ba2 50%, #8e44ad 70%, #9b59b6 85%, #a569bd 100%);
   min-height: 100vh;
-  max-height: none;
   color: #333;
   transition: all 0.3s ease;
-  margin: 0;
-  padding: 0;
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
@@ -31,6 +28,98 @@ body::before {
     linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(255,255,255,0.03) 100%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* Native Language Selector Styles */
+.native-language-select {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 160px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 20px;
+  padding-right: 35px;
+}
+
+.native-language-select:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+  transform: translateY(-1px);
+}
+
+.native-language-select:focus {
+  outline: none;
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.1);
+}
+
+/* Native select option styling */
+.native-language-select option {
+  background: white;
+  color: #333;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  border: none;
+}
+
+/* Dark mode support for native language selector */
+body.dark-mode .native-language-select {
+  background: rgba(255,255,255,0.05);
+  border-color: #334155;
+  color: #e2e8f0;
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e2e8f0'><path d='M7 10l5 5 5-5z'/></svg>");
+}
+
+body.dark-mode .native-language-select:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: #475569;
+}
+
+body.dark-mode .native-language-select:focus {
+  background: rgba(255,255,255,0.1);
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+body.dark-mode .native-language-select option {
+  background: #1a252f;
+  color: #e2e8f0;
+}
+
+/* Mobile responsive for native language selector */
+@media (max-width: 768px) {
+  .native-language-select {
+    min-width: 140px;
+    padding: 6px 30px 6px 10px;
+    font-size: 12px;
+    background-size: 18px;
+    background-position: right 6px center;
+  }
+}
+
+@media (max-width: 480px) {
+  .native-language-select {
+    min-width: 120px;
+    padding: 5px 25px 5px 8px;
+    font-size: 11px;
+    background-size: 16px;
+    background-position: right 5px center;
+  }
 }
 
 /* Enhanced Dark Mode Styles */
@@ -464,8 +553,6 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
   padding: 8px;
   border-radius: 8px;
   transition: all 0.3s ease;
-  backdrop-filter: none;
-  border: none;
 }
 
 .hamburger-btn:hover {
@@ -485,20 +572,11 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
   align-items: center;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
-  padding: 0;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  backdrop-filter: none;
-  box-shadow: none;
 }
 
 .logo-container:hover {
   transform: translateY(-2px) scale(1.02);
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
 }
 
 /* Premium Professional Logo Design */
@@ -706,10 +784,6 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
 
   .logo-container {
     padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
   }
 
   .logo-main {
@@ -2862,21 +2936,12 @@ body.dark-mode .order-stat-item {
 .footer-logo-container {
   display: flex;
   align-items: center;
-  transition: none;
   position: relative;
-  padding: 0;
   cursor: pointer;
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
-  box-shadow: none;
 }
 
 .footer-logo-container:hover {
   transform: none;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
 }
 
 .footer-logo-icon {
@@ -7406,5 +7471,325 @@ Actions {
 
   .limit-item {
     padding: 12px;
+  }
+}
+
+/* =================== ENHANCEMENT STYLES =================== */
+
+/* 1. Popup Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-50px) scale(0.9); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* 2. Enhanced Order History Styles */
+.enhanced-order-item {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.enhanced-order-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border-color: #667eea;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.order-id-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-id {
+  font-weight: 700;
+  color: #333;
+  font-size: 16px;
+}
+
+.copy-btn {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6c757d;
+}
+
+.copy-btn:hover {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.order-status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.order-status-badge.processing {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.order-status-badge.completed {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.order-details {
+  margin-bottom: 15px;
+}
+
+.order-service {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.order-service i {
+  font-size: 18px;
+  color: #667eea;
+}
+
+.order-service span {
+  font-weight: 600;
+  color: #333;
+}
+
+.order-meta {
+  display: flex;
+  gap: 20px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e9ecef;
+  padding-top: 15px;
+}
+
+.order-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.view-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.view-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 3. Enhanced UPI Payment Styles */
+.enhanced-upi {
+  position: relative;
+  overflow: hidden;
+}
+
+.upi-apps-grid {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e9ecef;
+  animation: slideIn 0.3s ease;
+}
+
+.upi-apps-grid h4 {
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+.upi-apps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+}
+
+.upi-app-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 10px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: #333;
+}
+
+.upi-app-btn:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.upi-app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.gpay-icon {
+  background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);
+}
+
+.phonepe-icon {
+  background: linear-gradient(135deg, #5f259f 0%, #3d1a78 100%);
+}
+
+.paytm-icon {
+  background: linear-gradient(135deg, #00baf2 0%, #0082c9 100%);
+}
+
+.bhim-icon {
+  background: linear-gradient(135deg, #f37021 0%, #d4501f 100%);
+}
+
+.amazon-icon {
+  background: linear-gradient(135deg, #ff9900 0%, #e88500 100%);
+}
+
+.whatsapp-icon {
+  background: linear-gradient(135deg, #25d366 0%, #20b358 100%);
+}
+
+.upi-app-btn span {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Dark Mode Support for Enhanced Features */
+body.dark-mode .enhanced-order-item,
+body.dark-mode .upi-apps-grid {
+  background: linear-gradient(145deg, #1e293b 0%, #1a252f 100%);
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+body.dark-mode .order-id,
+body.dark-mode .order-service span,
+body.dark-mode .upi-apps-grid h4 {
+  color: #e2e8f0;
+}
+
+body.dark-mode .order-meta {
+  color: #94a3b8;
+}
+
+body.dark-mode .copy-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+body.dark-mode .copy-btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+body.dark-mode .upi-app-btn {
+  background: #1a252f;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+body.dark-mode .upi-app-btn:hover {
+  border-color: #667eea;
+}
+
+/* Mobile Responsive for Enhanced Features */
+@media (max-width: 768px) {
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .order-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .upi-apps-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .enhanced-order-item {
+    padding: 15px;
+  }
+  
+  .upi-apps-grid {
+    padding: 15px;
   }
 }
