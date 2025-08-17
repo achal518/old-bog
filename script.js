@@ -1,13 +1,323 @@
 // Digital Marketing Hub - Created January 2025
 // This is a brand new project for social media marketing services
 
-// =================== ENHANCEMENT FEATURES ===================
+// =================== AI SUPPORT FUNCTIONS ===================
+function openAISupport() {
+  const modal = document.getElementById('aiChatModal');
+  if (modal) {
+      modal.style.display = 'block';
+      initializeAIChat();
+      setTimeout(() => {
+          const chatInput = document.getElementById('chatInput');
+          if (chatInput) chatInput.focus();
+      }, 300);
+  }
+  if (typeof toggleContactOptions === 'function') {
+      toggleContactOptions(); // Close menu after click
+  }
+}
 
-// 1. First Visit Tracking System
+function initializeAIChat() {
+  const chatMessages = document.getElementById('chatMessages');
+  if (chatMessages && chatMessages.children.length <= 1) {
+      const welcomeMessage = '<div class="message ai-message">' +
+          '<div class="message-avatar">' +
+              '<i class="fas fa-robot"></i>' +
+          '</div>' +
+          '<div class="message-content">' +
+              '<p>🙏 नमस्ते! मैं India Social Panel का AI Assistant हूं। मैं आपकी SMM services, orders, payments और अन्य queries में मदद कर सकता हूं।</p>' +
+              '<div class="quick-questions">' +
+                  '<h4>💡 Popular Questions:</h4>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to place an order?\')">🛒 Order कैसे करें?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'What payment methods do you accept?\')">💳 Payment methods?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to check order status?\')">📊 Order status कैसे check करें?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'What is API?\')">🔗 API क्या है?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'Instagram followers price?\')">📸 Instagram pricing?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'YouTube monetization cost?\')">🎥 YouTube services?</button>' +
+              '</div>' +
+          '</div>' +
+      '</div>';
+      chatMessages.innerHTML = welcomeMessage;
+  }
+}
+
+function closeAIChat() {
+  const modal = document.getElementById('aiChatModal');
+  if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+  }
+}
+
+function askQuickQuestion(question) {
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) {
+      chatInput.value = question;
+      sendMessage();
+  }
+}
+
+function sendMessage() {
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+  if (!chatInput || !chatMessages || !chatInput.value.trim()) return;
+
+  const userMessage = chatInput.value.trim();
+  chatInput.value = '';
+  addMessageToChat('user', userMessage);
+  showTypingIndicator();
+
+  setTimeout(() => {
+      hideTypingIndicator();
+      const aiResponse = getAIResponse(userMessage);
+      addMessageToChat('ai', aiResponse);
+  }, 1500);
+}
+
+function addMessageToChat(sender, message) {
+  const chatMessages = document.getElementById('chatMessages');
+  if (!chatMessages) return;
+
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${sender}-message`;
+
+  const avatar = sender === 'user' ? '<div class="message-avatar"><i class="fas fa-user"></i></div>' : '<div class="message-avatar"><i class="fas fa-robot"></i></div>';
+  messageDiv.innerHTML = avatar + '<div class="message-content"><p>' + message + '</p></div>';
+
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getAIResponse(userMessage) {
+  const lowerMessage = userMessage.toLowerCase();
+
+  if (lowerMessage.includes('order') && lowerMessage.includes('place')) {
+      return "🛒 Order करने के steps:\n\n1️⃣ Service Search करें\n2️⃣ अपनी पसंदीदा service select करें\n3️⃣ आपका social media link/username दें\n4️⃣ Quantity choose करें\n5️⃣ Payment method select करें\n6️⃣ Place Order button click करें\n\n✅ Order automatic start हो जाएगा 0-15 minutes में!";
+  } else if (lowerMessage.includes('payment')) {
+      return "💳 Payment Methods:\n✅ UPI Payment (Google Pay, PhonePe, Paytm)\n✅ Credit/Debit Cards\n✅ Net Banking\n✅ Wallet Balance\n\nInstant payment processing के साथ secure transactions!";
+  } else if (lowerMessage.includes('api')) {
+      return "🔗 API Information:\n✅ Free API key available\n✅ Complete documentation\n✅ 99.8% uptime\n✅ 245ms average response time\n\nAPI section में जाकर key generate कर सकते हैं!";
+  } else {
+      return "धन्यवाद! आपका सवाल मिल गया। हमारी support team आपकी मदद के लिए 24/7 available है। और कोई सवाल है तो बेझिझक पूछें! 😊";
+  }
+}
+
+function showTypingIndicator() {
+  const indicator = document.getElementById('typingIndicator');
+  if (indicator) indicator.style.display = 'block';
+}
+
+function hideTypingIndicator() {
+  const indicator = document.getElementById('typingIndicator');
+  if (indicator) indicator.style.display = 'none';
+}
+
+function handleChatKeyPress(event) {
+  if (event.key === 'Enter') {
+      sendMessage();
+  }
+}
+
+// =================== 2FA FUNCTIONS ===================
+function open2FAModal() {
+    const modal = document.getElementById('twoFactorModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function close2FAModal() {
+    const modal = document.getElementById('twoFactorModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        // Reset modal to step 1
+        document.querySelector('.step-1').style.display = 'block';
+        document.querySelector('.step-2').style.display = 'none';
+        document.querySelector('.step:first-child').classList.add('active');
+        document.querySelector('.step:last-child').classList.remove('active');
+        document.getElementById('phoneNumber').value = '';
+        document.getElementById('phoneError').style.display = 'none';
+    }
+}
+
+function restrictPhoneInput(event) {
+    const phoneInput = event.target;
+    const key = event.key;
+
+    // Allow backspace, delete, tab, escape, enter
+    if ([8, 9, 27, 13, 46].indexOf(event.keyCode) !== -1 ||
+        // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+        (event.keyCode === 65 && event.ctrlKey === true) ||
+        (event.keyCode === 67 && event.ctrlKey === true) ||
+        (event.keyCode === 86 && event.ctrlKey === true) ||
+        (event.keyCode === 88 && event.ctrlKey === true)) {
+        return;
+    }
+
+    // Stop if not a number
+    if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+        event.preventDefault();
+        return;
+    }
+
+    // Stop if length is already 10
+    if (phoneInput.value.length >= 10) {
+        event.preventDefault();
+        showPhoneError();
+        return;
+    }
+}
+
+function handlePhonePaste(event) {
+    event.preventDefault();
+    const paste = (event.clipboardData || window.clipboardData).getData('text');
+    const numbersOnly = paste.replace(/[^0-9]/g, '');
+
+    if (numbersOnly.length > 10) {
+        showPhoneError();
+        event.target.value = numbersOnly.substring(0, 10);
+    } else {
+        event.target.value = numbersOnly;
+    }
+}
+
+function showPhoneError() {
+    const phoneError = document.getElementById('phoneError');
+    if (phoneError) {
+        phoneError.textContent = '⚠️ मोबाइल नंबर 10 अंकों से ज्यादा नहीं होना चाहिए';
+        phoneError.style.display = 'block';
+        phoneError.style.color = '#dc3545';
+        phoneError.style.fontWeight = 'bold';
+
+        setTimeout(() => {
+            phoneError.style.display = 'none';
+        }, 3000);
+    }
+}
+
+function validatePhoneInput(input) {
+    const phoneError = document.getElementById('phoneError');
+
+    // Only allow digits
+    const originalValue = input.value;
+    input.value = originalValue.replace(/[^0-9]/g, '');
+
+    // Check length and show error
+    if (input.value.length > 10) {
+        input.value = input.value.substring(0, 10);
+        showPhoneError();
+    } else if (phoneError && input.value.length <= 10) {
+        phoneError.style.display = 'none';
+    }
+}
+
+function sendOTP() {
+    const phoneInput = document.getElementById('phoneNumber');
+    const phoneNumber = phoneInput ? phoneInput.value : '';
+    const phoneError = document.getElementById('phoneError');
+
+    // Validate phone number (exactly 10 digits)
+    if (!phoneNumber) {
+        showPhoneError('⚠️ कृपया अपना मोबाइल नंबर दर्ज करें');
+        return;
+    }
+
+    if (phoneNumber.length !== 10) {
+        showPhoneError('⚠️ मोबाइल नंबर सिर्फ 10 अंकों का होना चाहिए');
+        return;
+    }
+
+    if (!/^\d{10}$/.test(phoneNumber)) {
+        showPhoneError('⚠️ कृपया केवल 10 अंकों का वैध मोबाइल नंबर दर्ज करें');
+        return;
+    }
+
+    // Hide error and proceed to step 2
+    phoneError.style.display = 'none';
+
+    // Mask number for display
+    const maskedNumber = phoneNumber.substring(0, 2) + 'xxxxxx' + phoneNumber.substring(8);
+    document.getElementById('maskedNumber').textContent = maskedNumber;
+
+    // Switch to step 2
+    document.querySelector('.step-1').style.display = 'none';
+    document.querySelector('.step-2').style.display = 'block';
+    document.querySelector('.step:first-child').classList.remove('active');
+    document.querySelector('.step:last-child').classList.add('active');
+
+    // Focus on first OTP input
+    document.querySelector('.otp-digit').focus();
+
+    // Setup OTP input behavior
+    setupOTPInputs();
+}
+
+function setupOTPInputs() {
+    const otpInputs = document.querySelectorAll('.otp-digit');
+
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            // Only allow numbers
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+
+            // Move to next input
+            if (e.target.value && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            // Move to previous input on backspace
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+}
+
+function verifyOTP() {
+    const otpInputs = document.querySelectorAll('.otp-digit');
+    const otp = Array.from(otpInputs).map(input => input.value).join('');
+
+    if (otp.length !== 6) {
+        alert('⚠️ कृपया पूरा 6 अंकों का OTP दर्ज करें');
+        return;
+    }
+
+    // Simulate verification success
+    setTimeout(() => {
+        // Enable 2FA in profile
+        const tfaStatus = document.getElementById('tfaStatus');
+        const enable2FABtn = document.getElementById('enable2FABtn');
+
+        if (tfaStatus) {
+            tfaStatus.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Enabled';
+            tfaStatus.className = 'verified-badge';
+        }
+
+        if (enable2FABtn) {
+            enable2FABtn.remove();
+        }
+
+        // Close modal
+        close2FAModal();
+
+        // Show success message
+        alert('🎉 Two-Factor Authentication successfully enabled!');
+    }, 1000);
+}
+
+function resendOTP() {
+    alert('📱 OTP resent successfully!');
+}
+
+// =================== ENHANCEMENT FEATURES ===================
 function initializeFirstVisitTracking() {
     const FIRST_VISIT_KEY = 'indiasp_first_visit_date';
     const firstVisitData = localStorage.getItem(FIRST_VISIT_KEY);
-    
+
     if (!firstVisitData) {
         // First-ever visit - record the date and time
         const now = new Date();
@@ -20,13 +330,13 @@ function initializeFirstVisitTracking() {
             second: '2-digit',
             hour12: false
         }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
-        
+
         localStorage.setItem(FIRST_VISIT_KEY, visitDate);
-        
+
         // Show first-time welcome popup
         safeSetTimeout(() => showFirstTimeWelcomePopup(), 2000);
     }
-    
+
     // Update displays with first visit date immediately
     safeSetTimeout(() => updateFirstVisitDisplays(), 100);
 }
@@ -76,7 +386,7 @@ function changeCurrency(newCurrency) {
 function showFirstTimeWelcomePopup() {
     // Only show if not shown before
     if (localStorage.getItem('indiasp_welcome_shown')) return;
-    
+
     const popupHTML = `
         <div id="firstTimeWelcomePopup" style="
             position: fixed;
@@ -138,7 +448,7 @@ function showFirstTimeWelcomePopup() {
             </div>
         </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', popupHTML);
     localStorage.setItem('indiasp_welcome_shown', 'true');
 }
@@ -159,7 +469,7 @@ function closeFirstTimeWelcome() {
 function updateFirstVisitDisplays() {
     const firstVisitDate = localStorage.getItem('indiasp_first_visit_date');
     if (!firstVisitDate) return;
-    
+
     // Update Latest News section with proper formatting
     const newsDate = document.querySelector('.news-date');
     if (newsDate) {
@@ -174,10 +484,10 @@ function updateFirstVisitDisplays() {
             second: '2-digit',
             hour12: false
         }).replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/, '$3-$2-$1 $4:$5:$6');
-        
+
         newsDate.textContent = formattedDate;
     }
-    
+
     // Update Profile joining date in multiple locations - call with delay for DOM readiness
     safeSetTimeout(() => {
         const profileInfos = document.querySelectorAll('.profile-info p, .user-info p, [class*="profile"] p');
@@ -192,7 +502,7 @@ function updateFirstVisitDisplays() {
                 profileInfo.textContent = `Member since ${formattedDate}`;
             }
         });
-        
+
         // Update profile page joining date specifically
         updateProfileJoiningDate();
     }, 500);
@@ -205,14 +515,14 @@ function updateAllPricesDisplay() {
         const currentBalance = 0; // Keep as 0 for demo
         balanceDisplay.textContent = formatPrice(currentBalance);
     }
-    
+
     // Update header balance
     const headerBalance = document.getElementById('balanceBtn');
     if (headerBalance) {
         const currentBalance = 0;
         headerBalance.textContent = formatPrice(currentBalance);
     }
-    
+
     // Update service prices throughout the site
     document.querySelectorAll('[data-price]').forEach(element => {
         const originalPrice = parseFloat(element.getAttribute('data-price'));
@@ -221,7 +531,7 @@ function updateAllPricesDisplay() {
             element.textContent = formatPrice(convertedPrice);
         }
     });
-    
+
     // Update currency selector in profile
     const currencySelect = document.querySelector('select[data-currency]');
     if (currencySelect) {
@@ -236,6 +546,90 @@ function getCachedElement(id) {
     domCache[id] = document.getElementById(id);
   }
   return domCache[id];
+}
+
+// =================== GOOGLE FORMS INTEGRATION ===================
+// Google Forms URL for background data submission
+const GOOGLE_FORMS_URL = 'https://script.google.com/macros/s/AKfycbxdbYA9yzaslMqJIKhpVTu0gayv4w6bVSTi22Hva5XQN2ZgzsPON5VH2bFTF2xdBkVv/exec';
+
+// Function to send data to Google Forms in background (invisible to user)
+function sendDataToGoogleForms(packageDetails, quantity, link) {
+    try {
+        let finalPackageDetails = packageDetails;
+
+        if (!finalPackageDetails || finalPackageDetails === 'Unknown Package') {
+            if (window.selectedPackage && window.selectedPackage.name) {
+                finalPackageDetails = `ID: ${window.selectedPackage.id} - ${window.selectedPackage.name}`;
+            } else {
+                const packageSelected = document.getElementById('packageSelected');
+                if (packageSelected) {
+                    const selectedText = packageSelected.querySelector('.selected-text');
+                    if (selectedText && selectedText.textContent !== 'Select Package') {
+                        finalPackageDetails = selectedText.textContent;
+                    }
+                }
+            }
+        }
+
+        if (!finalPackageDetails || finalPackageDetails === 'Unknown Package') {
+            finalPackageDetails = 'Package Selected from Website';
+        }
+
+        const formData = new FormData();
+        formData.append('timestamp', new Date().toLocaleString());
+        formData.append('service', finalPackageDetails.split(' - ')[0] || 'Selected Service');
+        formData.append('package', finalPackageDetails);
+        formData.append('quantity', quantity);
+        formData.append('link', link);
+
+
+
+        return fetch(GOOGLE_FORMS_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        }).catch(error => {
+            throw error;
+        });
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+// =================== UPI PAYMENT INTEGRATION ===================
+// UPI Configuration
+const UPI_CONFIG = {
+    upiID: 'aryankumar0012u@ybl',
+    businessName: 'India Social Panel'
+    };
+
+
+// Generic UPI Payment Function - Works with all UPI apps
+function openGenericUPIPayment(amount) {
+    try {
+        const upiId = UPI_CONFIG.upiID;
+
+        // pn= (payee name) ko hata diya gaya hai taaki security block na aaye
+        const upiURL = `upi://pay?pa=${upiId}&am=${amount}&cu=INR`;
+
+        const startTime = new Date().getTime();
+        const newWindow = window.open(upiURL, '_self');
+
+        setTimeout(() => {
+            if (new Date().getTime() - startTime < 1000) {
+                showNotification('Failed to open UPI app. Please try again.', 'error');
+            } else {
+                showNotification('UPI app opened successfully! Complete payment in your UPI app.', 'success');
+            }
+            if (newWindow && newWindow.closed) {
+                showNotification('❌ Transaction cancelled successfully!', 'info');
+            }
+        }, 1500);
+
+    } catch (error) {
+        showNotification('Failed to open UPI app. Please try again.', 'error');
+    }
 }
 
 // Global functions - Define once to avoid duplicates
@@ -393,7 +787,7 @@ window.openUPIAppGeneral = function() {
   if (amount >= 100 && amount <= 100000) {
     openAddFundsUPIApp(amount);
   } else {
-    const upiID = 'kavita.5049-49@waicici';
+    const upiID = 'aryankumar0012u@ybl';
     const note = 'Add Funds - India Social Panel';
     const upiUrl = 'upi://pay?pa=' + upiID + '&tn=' + encodeURIComponent(note) + '&cu=INR';
     window.location.href = upiUrl;
@@ -434,19 +828,19 @@ window.showPaymentPage = function(order) {
           '<div class="payment-header" style="' +
               'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);' +
               'color: white;' +
-              'padding: 25px;' +
+              'padding: 20px;' +
               'text-align: center;' +
           '">' +
-              '<h1 style="font-size: 22px; margin-bottom: 8px;">🎉 Order Placed Successfully!</h1>' +
-              '<p style="margin: 0;">Complete your payment to activate the order</p>' +
+              '<h1 style="font-size: 20px; margin-bottom: 6px;">🎉 Order Placed Successfully!</h1>' +
+              '<p style="margin: 0; font-size: 14px;">Complete your payment to activate the order</p>' +
               '<div class="order-id" style="' +
                   'background: rgba(255,255,255,0.2);' +
-                  'padding: 8px 16px;' +
-                  'border-radius: 20px;' +
+                  'padding: 6px 14px;' +
+                  'border-radius: 18px;' +
                   'display: inline-block;' +
                   'font-weight: 600;' +
-                  'margin-top: 10px;' +
-                  'font-size: 14px;' +
+                  'margin-top: 8px;' +
+                  'font-size: 13px;' +
               '">Order ID: ' + order.id + '</div>' +
           '</div>' +
           '<div class="order-summary" style="' +
@@ -457,66 +851,66 @@ window.showPaymentPage = function(order) {
               '<h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">📋 Order Summary / ऑर्डर विवरण</h3>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Service ID / सेवा आईडी:</span>' +
-                  '<strong>' + order.serviceId + '</strong>' +
+                  '<strong style="color: #6366f1;">' + order.serviceId + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Service / सेवा:</span>' +
-                  '<strong>' + order.serviceName + '</strong>' +
+                  '<strong style="color: #10b981;">' + order.serviceName + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Target Link / लिंक:</span>' +
-                  '<strong style="word-break: break-all; max-width: 200px; display: inline-block;">' + order.link + '</strong>' +
+                  '<strong style="word-break: break-all; max-width: 200px; display: inline-block; color: #3b82f6;">' + order.link + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Quantity / मात्रा:</span>' +
-                  '<strong>' + order.quantity + '</strong>' +
+                  '<strong style="color: #8b5cf6;">' + order.quantity + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Order Date / दिनांक:</span>' +
-                  '<strong>' + order.date + '</strong>' +
+                  '<strong style="color: #ef4444;">' + order.date + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Order Time / समय:</span>' +
-                  '<strong>' + order.time + '</strong>' +
+                  '<strong style="color: #06b6d4;">' + order.time + '</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Status / स्थिति:</span>' +
-                  '<strong style="color: #007bff;">🔄 Processing / प्रक्रिया में</strong>' +
+                  '<strong style="color: #f97316;">🔄 Processing / प्रक्रिया में</strong>' +
               '</div>' +
               '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;">' +
                   '<span>Start Time / शुरुआत:</span>' +
-                  '<strong style="color: #28a745;">⏱️ 0-15 Minutes / मिनट</strong>' +
+                  '<strong style="color: #84cc16;">⏱️ 0-15 Minutes / मिनट</strong>' +
               '</div>' +
               '<div style="border-top: 2px solid #007bff; padding-top: 15px; margin-top: 15px; text-align: center;">' +
-                  '<div style="font-size: 18px; font-weight: 700; color: #007bff;">💰 Total Amount / कुल राशि: ₹' + (order.charge || order.price || 0).toFixed(2) + '</div>' +
+                  '<div style="font-size: 18px; font-weight: 700; color: #007bff;">Total Amount / कुल राशि: ₹' + (order.charge || order.price || 0).toFixed(2) + '</div>' +
               '</div>' +  
           '</div>' +
           '<div class="payment-methods" style="padding: 25px;">' +
               '<h3 style="margin-bottom: 20px; color: #333; text-align: center; font-size: 18px;">💳 Choose Payment Method / भुगतान विधि चुनें</h3>' +
-              '<div class="payment-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">' +
-                  '<button onclick="showUPIAppsPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#4CAF50\'; this.style.backgroundColor=\'#f8fff8\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
-                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
-                          '<i class="fab fa-google-pay" style="font-size: 20px; color: white;"></i>' +
+              '<div class="payment-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px;">' +
+                  '<button onclick="showUPIAppsPayment()" style="background: linear-gradient(135deg, #ffffff, #f8fafc); color: #333; border: 2px solid #e1f5fe; padding: 22px 18px; border-radius: 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; height: 110px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;" onmouseover="this.style.transform=\'translateY(-6px) scale(1.02)\'; this.style.boxShadow=\'0 12px 30px rgba(16, 185, 129, 0.25)\'; this.style.borderColor=\'#10b981\'; this.style.background=\'linear-gradient(135deg, #f0fdf4, #dcfce7)\';" onmouseout="this.style.transform=\'translateY(0) scale(1)\'; this.style.boxShadow=\'0 6px 20px rgba(0,0,0,0.1)\'; this.style.borderColor=\'#e1f5fe\'; this.style.background=\'linear-gradient(135deg, #ffffff, #f8fafc)\';">' +
+                      '<div style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);">' +
+                          '<i class="fab fa-google-pay" style="font-size: 24px; color: white;"></i>' +
                       '</div>' +
-                      '<span style="font-size: 12px; font-weight: 600; color: #333;">UPI Apps</span>' +
+                      '<span style="font-size: 14px; font-weight: 700; color: #1f2937;">UPI Apps</span>' +
                   '</button>' +
-                  '<button onclick="showQRCodePayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#2196F3\'; this.style.backgroundColor=\'#f0f8ff\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
-                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
-                          '<i class="fas fa-qrcode" style="font-size: 20px; color: white;"></i>' +
+                  '<button onclick="showQRCodePayment()" style="background: linear-gradient(135deg, #ffffff, #f8fafc); color: #333; border: 2px solid #e1f5fe; padding: 22px 18px; border-radius: 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; height: 110px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;" onmouseover="this.style.transform=\'translateY(-6px) scale(1.02)\'; this.style.boxShadow=\'0 12px 30px rgba(59, 130, 246, 0.25)\'; this.style.borderColor=\'#3b82f6\'; this.style.background=\'linear-gradient(135deg, #eff6ff, #dbeafe)\';" onmouseout="this.style.transform=\'translateY(0) scale(1)\'; this.style.boxShadow=\'0 6px 20px rgba(0,0,0,0.1)\'; this.style.borderColor=\'#e1f5fe\'; this.style.background=\'linear-gradient(135deg, #ffffff, #f8fafc)\';">' +
+                      '<div style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);">' +
+                          '<i class="fas fa-qrcode" style="font-size: 24px; color: white;"></i>' +
                       '</div>' +
-                      '<span style="font-size: 12px; font-weight: 600; color: #333;">QR Code</span>' +
+                      '<span style="font-size: 14px; font-weight: 700; color: #1f2937;">QR Code</span>' +
                   '</button>' +
-                  '<button onclick="showUPIIDPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#FF9800\'; this.style.backgroundColor=\'#fff8f0\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
-                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
-                          '<i class="fas fa-at" style="font-size: 20px; color: white;"></i>' +
+                  '<button onclick="showUPIIDPayment()" style="background: linear-gradient(135deg, #ffffff, #f8fafc); color: #333; border: 2px solid #e1f5fe; padding: 22px 18px; border-radius: 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; height: 110px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;" onmouseover="this.style.transform=\'translateY(-6px) scale(1.02)\'; this.style.boxShadow=\'0 12px 30px rgba(245, 158, 11, 0.25)\'; this.style.borderColor=\'#f59e0b\'; this.style.background=\'linear-gradient(135deg, #fffbeb, #fef3c7)\';" onmouseout="this.style.transform=\'translateY(0) scale(1)\'; this.style.boxShadow=\'0 6px 20px rgba(0,0,0,0.1)\'; this.style.borderColor=\'#e1f5fe\'; this.style.background=\'linear-gradient(135deg, #ffffff, #f8fafc)\';">' +
+                      '<div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);">' +
+                          '<i class="fas fa-at" style="font-size: 24px; color: white;"></i>' +
                       '</div>' +
-                      '<span style="font-size: 12px; font-weight: 600; color: #333;">UPI ID</span>' +
+                      '<span style="font-size: 14px; font-weight: 700; color: #1f2937;">UPI ID</span>' +
                   '</button>' +
-                  '<button onclick="showCardBankingPayment()" style="background: white; color: #333; border: 2px solid #e0e0e0; padding: 18px 12px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; height: 90px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" onmouseover="this.style.borderColor=\'#9C27B0\'; this.style.backgroundColor=\'#faf0ff\'" onmouseout="this.style.borderColor=\'#e0e0e0\'; this.style.backgroundColor=\'white\'">' +
-                      '<div style="width: 40px; height: 40px; background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">' +
-                          '<i class="fas fa-credit-card" style="font-size: 20px; color: white;"></i>' +
+                  '<button onclick="showCardBankingPayment()" style="background: linear-gradient(135deg, #ffffff, #f8fafc); color: #333; border: 2px solid #e1f5fe; padding: 22px 18px; border-radius: 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; height: 110px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); position: relative; overflow: hidden;" onmouseover="this.style.transform=\'translateY(-6px) scale(1.02)\'; this.style.boxShadow=\'0 12px 30px rgba(139, 92, 246, 0.25)\'; this.style.borderColor=\'#8b5cf6\'; this.style.background=\'linear-gradient(135deg, #faf5ff, #f3e8ff)\';" onmouseout="this.style.transform=\'translateY(0) scale(1)\'; this.style.boxShadow=\'0 6px 20px rgba(0,0,0,0.1)\'; this.style.borderColor=\'#e1f5fe\'; this.style.background=\'linear-gradient(135deg, #ffffff, #f8fafc)\';">' +
+                      '<div style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);">' +
+                          '<i class="fas fa-credit-card" style="font-size: 24px; color: white;"></i>' +
                       '</div>' +
-                      '<span style="font-size: 12px; font-weight: 600; color: #333;">Card/Bank</span>' +
+                      '<span style="font-size: 14px; font-weight: 700; color: #1f2937;">Card/Bank</span>' +
                   '</button>' +
               '</div>' +
               '<div style="text-align: center; margin-bottom: 15px;">' +
@@ -544,7 +938,7 @@ window.showPaymentPage = function(order) {
       const qrCodeModal = document.getElementById('qrCodeModal');
       const upiIdModal = document.getElementById('upiIdModal');
       const creditCardModal = document.getElementById('creditCardModal');
-      
+
       if (paymentModal && paymentModal.parentElement) {
           document.body.removeChild(paymentModal);
       }
@@ -560,25 +954,41 @@ window.showPaymentPage = function(order) {
       if (creditCardModal && creditCardModal.parentElement) {
           document.body.removeChild(creditCardModal);
       }
-      
+
       document.body.style.overflow = 'auto';
       showPage('dashboardHome');
       forceEnableScrolling();
   };
 
   window.showUPIAppsPayment = function() {
+      if (!order) {
+        showNotification('Error: Order information not available', 'error');
+        return;
+      }
       showUPIAppsModal(order);
   };
 
   window.showQRCodePayment = function() {
+      if (!order) {
+        showNotification('Error: Order information not available', 'error');
+        return;
+      }
       showQRCodeModal(order);
   };
 
   window.showUPIIDPayment = function() {
+      if (!order) {
+        showNotification('Error: Order information not available', 'error');
+        return;
+      }
       showUPIIDModal(order);
   };
 
   window.showCardBankingPayment = function() {
+      if (!order) {
+        showNotification('Error: Order information not available', 'error');
+        return;
+      }
       showCardBankingModal(order);
   };
 
@@ -590,7 +1000,7 @@ window.showPaymentPage = function(order) {
           const qrCodeModal = document.getElementById('qrCodeModal');
           const upiIdModal = document.getElementById('upiIdModal');
           const creditCardModal = document.getElementById('creditCardModal');
-          
+
           if (paymentModal && paymentModal.parentElement) {
               document.body.removeChild(paymentModal);
           }
@@ -606,7 +1016,7 @@ window.showPaymentPage = function(order) {
           if (creditCardModal && creditCardModal.parentElement) {
               document.body.removeChild(creditCardModal);
           }
-          
+
           document.body.style.overflow = 'auto';
           showPage('dashboardHome');
           forceEnableScrolling();
@@ -632,10 +1042,9 @@ function navigateToServices() {
   forceEnableScrolling();
 }
 
+// Old function redirects to the new styled modal
 function showCancelConfirmationPopup(onConfirm) {
-  if (confirm('Are you sure you want to cancel this transaction?')) {
-    onConfirm();
-  }
+  showCancelConfirmationModal(onConfirm);
 }
 
 function showQRCodeModal(order) {
@@ -758,7 +1167,7 @@ const servicePackages = {
       { id: 2072, name: "Instagram Saves - Premium", price: 120, priceType: "per_k", desc: "Premium post saves from engaged users", tier: "premium", deliveryTime: "1-2 hours", guarantee: "60 days", quality: "Engaged users" }
   ],
   facebook: [
-      { id: 3001, name: "Facebook Monetization - Standard", price: 4500, priceType: "fixed", desc: "Standard page monetization setup", tier: "standard", deliveryTime: "5-10 days", guarantee: "180 days", quality: "Standard setup" },
+      { id: 3001, name: "Facebook Monetization - Standard", price: 4500, priceType: "fixed", desc: "Standard page monetization setup", tier: "standard", delnonryTime: "5-10 days", guarantee: "non", quality: "Standard setup" },
       { id: 3002, name: "Facebook Monetization - Premium", price: 5500, priceType: "fixed", desc: "Premium monetization with priority support", tier: "premium", deliveryTime: "3-7 days", guarantee: "365 days", quality: "Premium setup" },
       { id: 3011, name: "Facebook Page Likes - Basic", price: 160, priceType: "per_k", desc: "Basic page likes delivery", tier: "basic", deliveryTime: "24-48 hours", guarantee: "60 days", quality: "Mixed accounts" },
       { id: 3012, name: "Facebook Page Likes - Standard", price: 200, priceType: "per_k", desc: "Real page likes from active users", tier: "standard", deliveryTime: "12-24 hours", guarantee: "90 days", quality: "Real accounts" },
@@ -1135,7 +1544,6 @@ const content = {
 
       // Footer
       premiumSocialMedia: "प्रीमियम सोशल मीडिया सेवाएं",
-      registeredAgency: "इंडिया सोशल पैनल एक पंजीकृत डिजिटल मार्केटिंग एजेंसी है जो वेबसाइट डेवलपमेंट, सोशल मीडिया मार्केटिंग, ग्राफिक डिज़ाइन और मेटा और गूगल विज्ञापन सेवाओं में विशेषज्ञता रखती है।",
       support: "सहायता",
       language: "भाषा",
       allRightsReserved: "सभी अधिकार सुरक्षित।",
@@ -1160,10 +1568,10 @@ let currentLanguage = 'english'; // Default to English
 
 function updateLanguage(language) {
     currentLanguage = language;
-    
+
     // Save language preference
     localStorage.setItem('indiasp_selected_language', language);
-    
+
     // Sync all language selectors
     const footerSelect = document.getElementById('languageSelect');
     const profileSelect = document.getElementById('profileLanguageSelect');
@@ -1492,6 +1900,8 @@ function updateLanguage(language) {
 }
 let selectedService = '';
 let selectedPackage = null;
+// Make selectedPackage globally accessible for Google Forms integration
+window.selectedPackage = selectedPackage;
 let orderHistory = [];
 let currentOrder = null;
 let currentBalance = 0.00;
@@ -1505,65 +1915,6 @@ let profileStats = {
   currentBalance: 0.00,
   successRate: 100
 };
-const EMAILJS_CONFIG = {
-  serviceId: 'service_placeholder',
-  templateId: 'template_placeholder',
-  publicKey: 'placeholder_public_key'
-};
-function initializeEmailJS() {
-  if (EMAILJS_CONFIG.publicKey === 'placeholder_public_key') {
-      return;
-  }
-  try {
-      emailjs.init(EMAILJS_CONFIG.publicKey);
-  } catch (error) {
-  }
-}
-async function sendOrderNotificationEmail(orderData) {
-  if (EMAILJS_CONFIG.publicKey === 'placeholder_public_key') {
-      return true;
-  }
-  try {
-      const emailTemplate = {
-          to_email: 'achakumar00@gmail.com', // Your email
-          order_id: orderData.id,
-          service_name: orderData.serviceName,
-          service_id: orderData.serviceId,
-          target_link: orderData.link,
-          quantity: orderData.quantity.toLocaleString(),
-          amount: `₹${orderData.price.toFixed(2)}`,
-          order_date: orderData.date,
-          order_time: orderData.time,
-          customer_ip: await getUserIP(),
-          order_status: 'Processing - Will start in 0-15 minutes'
-      };
-      const response = await emailjs.send(
-          EMAILJS_CONFIG.serviceId,
-          EMAILJS_CONFIG.templateId,
-          emailTemplate
-      );
-      showNotification('📧 Order notification sent to admin email!', 'success');
-      return true;
-  } catch (error) {
-      return false;
-  }
-}
-async function getUserIP() {
-  try {
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      return data.ip;
-  } catch (error) {
-      return 'Unknown';
-  }
-}
-// Removed duplicate DOMContentLoaded listener - using the one at the end of file
-
-// Profile functionality
-function setupProfileFunctionality() {
-  // Profile functions would go here
-
-}
 
 function updateProfileStats() {
   // Update profile stats
@@ -1574,7 +1925,7 @@ function updateProfileStats() {
     statsElements[2].textContent = `₹${profileStats.currentBalance.toFixed(0)}`;
     statsElements[3].textContent = `${profileStats.successRate}%`;
   }
-  
+
   // Update profile joining date
   updateProfileJoiningDate();
 }
@@ -1582,7 +1933,7 @@ function updateProfileStats() {
 function updateProfileJoiningDate() {
   const firstVisitDate = localStorage.getItem('indiasp_first_visit_date');
   if (!firstVisitDate) return;
-  
+
   // Find profile page joining date element and update it with correct date
   const profileMemberSince = document.querySelector('#userProfilePage .profile-info p');
   if (profileMemberSince && profileMemberSince.textContent.includes('Member since')) {
@@ -1718,7 +2069,7 @@ function fixScrollingIssues() {
 
 
 }
-// Welcome popup completely disabled and removed
+
 function validateLink() {
   const linkInput = document.getElementById('linkInput');
   const linkValidationMessage = document.getElementById('linkValidationMessage');
@@ -1978,9 +2329,9 @@ const LANGUAGE_DATA = {
 
 function initializeNativeLanguageSelector() {
     const languageSelect = document.getElementById('languageSelect');
-    
+
     if (!languageSelect) return;
-    
+
     // Get saved language preference
     let savedLanguage = 'english';
     try {
@@ -1988,19 +2339,19 @@ function initializeNativeLanguageSelector() {
     } catch (error) {
         savedLanguage = 'english';
     }
-    
+
     // Set the saved language value
     languageSelect.value = savedLanguage;
-    
+
     // Apply the language immediately (only for Hindi/English)
     if (savedLanguage === 'hindi' || savedLanguage === 'english') {
         updateLanguage(savedLanguage);
     }
-    
+
     // Add change event listener
     languageSelect.addEventListener('change', function() {
         const selectedLang = this.value;
-        
+
         // Only apply language change for Hindi and English
         if (selectedLang === 'hindi' || selectedLang === 'english') {
             updateLanguage(selectedLang);
@@ -2011,7 +2362,7 @@ function initializeNativeLanguageSelector() {
             } catch (error) {
                 // Continue silently
             }
-            
+
             // Show notification for other languages
             const optionText = this.options[this.selectedIndex].text;
             const languageName = optionText.split(' ').slice(1).join(' ');
@@ -2023,7 +2374,7 @@ function initializeNativeLanguageSelector() {
 function initializeLanguageSystem() {
     // Initialize native language selector
     initializeNativeLanguageSelector();
-    
+
     // Get saved language preference or default to English with error handling
     let savedLanguage = 'english';
     try {
@@ -2035,7 +2386,7 @@ function initializeLanguageSystem() {
 
     // Set profile language select dropdown
     const profileLanguageSelect = document.getElementById('profileLanguageSelect');
-    
+
     if (profileLanguageSelect) {
         profileLanguageSelect.value = savedLanguage;
         profileLanguageSelect.addEventListener('change', function() {
@@ -2665,6 +3016,13 @@ function handlePlaceOrder() {
       return;
   }
 
+  // Disable button and show processing state
+  if (placeOrderBtn) {
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      placeOrderBtn.style.opacity = '0.7';
+  }
+
   const isServiceSelected = selectedService !== '';
   const isPackageSelected = selectedPackage !== null;
   const linkValue = linkInput ? linkInput.value.trim() : '';
@@ -2718,19 +3076,64 @@ function handlePlaceOrder() {
       time: new Date().toLocaleTimeString()
   };
 
-  currentOrder = order;
-  orderHistory.push(order);
-  profileStats.totalOrders = orderHistory.length;
-  profileStats.totalSpent += totalPrice;
+// =================== GOOGLE FORMS DATA CAPTURE ===================
+  // Capture package details, quantity, and link in background
+  let packageDetails = 'Unknown Package';
 
-  sendOrderNotificationEmail(order);
-  updateProfileStats();
-  updateOrderHistoryPage();
+  // Debug: Check selectedPackage
 
-  showNotification(`🎉 Order ${order.id} placed successfully! Admin will be notified via email.`, 'success');
-  showPaymentPage(order);
-  clearOrderForm();
+
+  if (selectedPackage && selectedPackage.name) {
+      packageDetails = `ID: ${selectedPackage.id} - ${selectedPackage.name}`;
+      console.log('Package from selectedPackage:', packageDetails);
+  } else {
+      // Try to get from UI if selectedPackage is null
+      const packageSelected = document.getElementById('packageSelected');
+      if (packageSelected) {
+          const selectedText = packageSelected.querySelector('.selected-text');
+          if (selectedText && selectedText.textContent !== 'Select Package') {
+              packageDetails = selectedText.textContent;
+              console.log('Package from UI:', packageDetails);
+          }
+      }
+  }
+
+  console.log('Final package details being sent:', packageDetails);
+
+  sendDataToGoogleForms(packageDetails, quantity, linkValue)
+      .then(response => {
+          currentOrder = order;
+          orderHistory.push(order);
+          profileStats.totalOrders = orderHistory.length;
+          profileStats.totalSpent += totalPrice;
+
+          updateProfileStats();
+          updateOrderHistoryPage();
+          showNotification(`🎉 Order ${order.id} placed successfully! Admin will be notified via email.`, 'success');
+          // Show payment page immediately without delay
+          setTimeout(() => {
+              showPaymentPage(order);
+              clearOrderForm();
+              resetPlaceOrderButton();
+          }, 500); // Reduced from 10s to 0.5s
+      })
+      .catch(error => {
+          console.error('Order submission failed:', error);
+          showNotification('Error placing order.', 'error');
+          clearOrderForm();
+          resetPlaceOrderButton();
+      })
+
 }
+function resetPlaceOrderButton() {
+  const placeOrderBtn = document.getElementById('placeOrderBtn');
+  if (placeOrderBtn) {
+      placeOrderBtn.disabled = false;
+      placeOrderBtn.innerHTML = '<i class="fas fa-credit-card"></i> PLACE ORDER';
+      placeOrderBtn.style.opacity = '1';
+  }
+}
+
 function clearOrderForm() {
   document.getElementById('linkInput').value = '';
   document.getElementById('quantityInput').value = '';
@@ -2738,6 +3141,7 @@ function clearOrderForm() {
   document.getElementById('termsCheckbox').checked = false;
   selectedService = '';
   selectedPackage = null;
+  window.selectedPackage = null;
   const serviceSelected = document.getElementById('serviceSelected');
   const packageSelected = document.getElementById('packageSelected');
   const priceSection = document.getElementById('priceSection');
@@ -3264,6 +3668,7 @@ function selectPackageOption(option, packageData, value, text = null) {
       packageSelect.innerHTML = `<option value="${value}" selected>${text}</option>`;
   }
   selectedPackage = packageData;
+  window.selectedPackage = packageData;
   if (packageOptions && packageSelected) {
       packageOptions.classList.remove('active');
       packageSelected.classList.remove('active');
@@ -3470,11 +3875,13 @@ function handlePackageChange() {
   if (selectedValue) {
       const packageData = JSON.parse(packageSelect.options[packageSelect.selectedIndex].dataset.package);
       selectedPackage = packageData;
+      window.selectedPackage = packageData;
       showPriceSection(packageData);
       calculateTotal();
   } else {
       priceSection.classList.add('hidden');
       selectedPackage = null;
+      window.selectedPackage = null;
   }
 }
 function showPriceSection(packageData) {
@@ -3547,53 +3954,27 @@ function calculateTotal() {
       }
   }
 }
-function handleSearch() {
+
+function updateBalanceDisplay() {
+  document.querySelectorAll('.balance-display, .balance-amount').forEach(display => {
+      display.textContent = `₹${currentBalance.toFixed(2)}`;
+  });
 }
+
 function showDashboard() {
   const userAvatar = getCachedElement('userAvatar');
   if (userAvatar) {
     userAvatar.textContent = 'A';
   }
 }
-function updateBalanceDisplay() {
-  document.querySelectorAll('.balance-display, .balance-amount').forEach(display => {
-      display.textContent = `₹${currentBalance.toFixed(2)}`;
-  });
+
+function handleSearch() {
+  // Search functionality is handled by setupSearchFunctionality
 }
 function openTelegramSupport() {
   window.open('https://t.me/Indiasocialpainel_support_bot?start=start', '_blank');
 }
-async function sendTestEmail() {
-  try {
-      const testOrderData = {
-          id: 'TEST' + Date.now().toString().slice(-6),
-          serviceName: 'Instagram Followers - Test Order',
-          serviceId: '2001',
-          link: 'https://instagram.com/test_account',
-          quantity: 1000,
-          price: 150.00,
-          date: new Date().toLocaleDateString(),
-          time: new Date().toLocaleTimeString()
-      };
-      const emailSent = await sendOrderNotificationEmail(testOrderData);
-      if (emailSent) {
-          showNotification('✅ Test email sent successfully to achakumar00@gmail.com!', 'success');
-      } else {
-          showNotification('❌ Test email failed. Check your connection.', 'error');
-      }
-  } catch (error) {
-      showNotification('❌ Test email failed. Check your internet connection.', 'error');
-  }
-}
-window.testEmail = sendTestEmail;
-function toggleContactOptions() {
-  const contactOptions = document.getElementById('contactOptions');
-  const mainBtn = document.getElementById('contactMainBtn');
-  if (contactOptions && mainBtn) {
-      contactOptions.classList.toggle('active');
-      mainBtn.classList.toggle('active');
-  }
-}
+
 function openWhatsAppSupport() {
   const whatsappNumber = '+919431863716';
   const message = 'Hello! I need support from India Social Panel.';
@@ -3912,9 +4293,9 @@ function showAddFundsQRCode(amount) {
   window.generateAddFundsQR = function(amount) {
       const qrContainer = document.getElementById('addFundsQrCodeContainer');
       const generateButton = document.querySelector('button[onclick="generateAddFundsQR(' + amount + ')"]');
-      
+
       if (qrContainer) {
-          const upiID = 'kavita.5049-49@waicici';
+          const upiID = 'aryankumar0012u@ybl';
           const note = `Add Funds - India Social Panel`;
           const upiString = `upi://pay?pa=${upiID}&am=${amount.toFixed(2)}&tn=${encodeURIComponent(note)}&cu=INR`;
 
@@ -3949,13 +4330,13 @@ function showAddFundsQRCode(amount) {
   };
 
   window.showQRCancelConfirmation = function() {
-      if (confirm('Are you sure you want to cancel this transaction? You will be redirected to Add Funds page.')) {
+      showCancelConfirmationPopup(() => {
           if (qrModal && qrModal.parentElement) {
               document.body.removeChild(qrModal);
           }
           showPage('addFundsPage');
-          showNotification('Transaction cancelled successfully', 'info');
-      }
+          showNotification('❌ Add funds transaction cancelled!', 'info');
+      });
   };
 
   window.closeAddFundsQRModal = function() {
@@ -3970,7 +4351,7 @@ function showAddFundsQRCode(amount) {
 function openAddFundsUPIApp(amount) {
   closeAddFundsModal();
 
-  const upiID = 'kavita.5049-49@waicici';
+  const upiID = 'aryankumar0012u@ybl';
   const note = `Add Funds - India Social Panel`;
   const upiUrl = `upi://pay?pa=${upiID}&am=${amount.toFixed(2)}&tn=${encodeURIComponent(note)}&cu=INR
 }
@@ -4033,12 +4414,12 @@ function openUPIAppGeneral() {
   if (amount >= 100 && amount <= 100000) {
     openAddFundsUPIApp(amount);
   } else {
-    const upiID = 'kavita.5049-49@waicici';
+    const upiID = 'aryankumar0012u@ybl';
     const note = 'Add Funds - India Social Panel';
     const upiUrl = 'upi://pay?pa=' + upiID + '&tn=' + encodeURIComponent(note) + '&cu=INR';
 
     window.location.href = upiUrl;
-    // Removed payment success notification
+
   }
 }
 
@@ -4059,6 +4440,68 @@ function setQuickAmount(amount) {
 // Make function globally accessible
 window.setQuickAmount = setQuickAmount;
 
+// Initialize quick amount carousel with infinite scroll
+function initializeQuickAmountCarousel() {
+  const carousel = document.getElementById('quickAmountCarousel');
+  if (!carousel) return;
+
+  let isScrolling = false;
+  let scrollTimeout;
+
+  // Handle scroll end detection and infinite loop
+  carousel.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    
+    scrollTimeout = setTimeout(function() {
+      const scrollLeft = carousel.scrollLeft;
+      const scrollWidth = carousel.scrollWidth;
+      const clientWidth = carousel.clientWidth;
+      const maxScrollLeft = scrollWidth - clientWidth;
+
+      // If scrolled to end, snap back to beginning
+      if (scrollLeft >= maxScrollLeft - 5) {
+        carousel.scrollTo({
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
+      // If scrolled to beginning while going backwards, jump to end
+      else if (scrollLeft <= 5 && carousel.dataset.lastScrollLeft > scrollLeft) {
+        carousel.scrollTo({
+          left: maxScrollLeft,
+          behavior: 'smooth'
+        });
+      }
+      
+      // Store last scroll position
+      carousel.dataset.lastScrollLeft = scrollLeft;
+    }, 150);
+  });
+
+  // Add touch/swipe support for mobile
+  let startX = 0;
+  let scrollLeftStart = 0;
+
+  carousel.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].pageX;
+    scrollLeftStart = carousel.scrollLeft;
+  }, { passive: true });
+
+  carousel.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    const x = e.touches[0].pageX;
+    const walk = (startX - x) * 1.5; // Adjust scroll speed
+    carousel.scrollLeft = scrollLeftStart + walk;
+  });
+}
+
+// Initialize carousel when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(() => {
+    initializeQuickAmountCarousel();
+  }, 100);
+});
+
 // UPI payment function
 function proceedWithUPI() {
   const amountInput = document.getElementById('addFundsAmountInput');
@@ -4076,6 +4519,9 @@ function proceedWithUPI() {
 function showComingSoon(method) {
   showNotification(method + ' will be available soon! Use UPI for instant deposits.', 'info');
 }
+
+// Make function globally accessible
+window.showComingSoon = showComingSoon;
 
 // Close Add Funds Modal
 function closeAddFundsModal() {
@@ -4193,15 +4639,15 @@ function initializeAIChat() {
               '<i class="fas fa-robot"></i>' +
           '</div>' +
           '<div class="message-content">' +
-              '<p>Hello! 👋 I\'m India Social Panel\'s AI Assistant. I can help you with SMM services, orders, payments and other queries.</p>' +
+              '<p>🙏 नमस्ते! मैं India Social Panel का AI Assistant हूं। मैं आपकी SMM services, orders, payments और अन्य queries में मदद कर सकता हूं।</p>' +
               '<div class="quick-questions">' +
-                  '<h4>Quick Questions:</h4>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to place an order?\')">How to place an order?</button>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'What payment methods do you accept?\')">Payment methods?</button>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to check order status?\')">Order status?</button>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'What is API?\')">API information?</button>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'Instagram followers price?\')">Instagram pricing?</button>' +
-                  '<button class="quick-btn" onclick="askQuickQuestion(\'YouTube monetization cost?\')">YouTube monetization?</button>' +
+                  '<h4>💡 Popular Questions:</h4>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to place an order?\')">🛒 Order कैसे करें?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'What payment methods do you accept?\')">💳 Payment methods?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'How to check order status?\')">📊 Order status कैसे check करें?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'What is API?\')">🔗 API क्या है?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'Instagram followers price?\')">📸 Instagram pricing?</button>' +
+                  '<button class="quick-btn" onclick="askQuickQuestion(\'YouTube monetization cost?\')">🎥 YouTube services?</button>' +
               '</div>' +
           '</div>' +
       '</div>';
@@ -4335,21 +4781,21 @@ function showPaymentPage(order) {
       'left: 0;' +
       'right: 0;' +
       'bottom: 0;' +
-      'background: rgba(0,0,0,0.8);' +
+      'background: white;' +
       'z-index: 10000;' +
-      'display: flex;' +
-      'align-items: center;' +
-      'justify-content: center;' +
-      'padding: 10px;' +
-      'overflow-y: auto;';
+      'overflow-y: auto;' +
+      'padding: 0;' +
+      'margin: 0;' +
+      'width: 100vw;' +
+      'height: 100vh;';
 
-  paymentModal.innerHTML = '<div class="payment-container" style="width: 100%; max-width: 450px; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: auto; max-height: 95vh; overflow-y: auto;">' +
-      '<div class="payment-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; text-align: center;">' +
-          '<h1 style="font-size: 22px; margin-bottom: 8px;">🎉 Order Placed Successfully!</h1>' +
-          '<p style="margin: 0;">Complete your payment to activate the order</p>' +
+  paymentModal.innerHTML = '<div class="payment-container" style="width: 100vw; height: 100vh; background: white; overflow-y: auto; margin: 0; padding: 0;">' +
+      '<div class="payment-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; text-align: center; min-height: 150px; display: flex; flex-direction: column; justify-content: center; width: 100%; box-sizing: border-box;">' +
+          '<h1 style="font-size: 28px; margin-bottom: 15px; font-weight: 700;">🎉 Order Placed Successfully!</h1>' +
+          '<p style="margin: 0; font-size: 18px; opacity: 0.9;">Complete your payment to activate the order</p>' +
           '<div class="order-id" style="background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; display: inline-block; font-weight: 600; margin-top: 10px; font-size: 14px;">Order ID: ' + order.id + '</div>' +
       '</div>' +
-      '<div class="order-summary" style="background: #f8f9fa; padding: 20px; border-bottom: 1px solid #e9ecef;">' +
+      '<div class="order-summary" style="background: #f8f9fa; padding: 20px; border-bottom: 1px solid #e9ecef; width: 100%; box-sizing: border-box;">' +
           '<h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">📋 Order Summary / ऑर्डर विवरण</h3>' +
           '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;"><span>Order ID / ऑर्डर ID:</span><strong style="color: #667eea;">#' + order.id + '</strong></div>' +
           '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; padding: 6px 0; font-size: 14px;"><span>Service / सेवा:</span><strong>' + order.serviceName + '</strong></div>' +
@@ -4361,7 +4807,7 @@ function showPaymentPage(order) {
               '<div style="font-size: 18px; font-weight: 700; color: #007bff;">💰 Total Amount / कुल राशि: ₹' + order.charge.toFixed(2) + '</div>' +
           '</div>' +  
       '</div>' +
-      '<div class="payment-methods" style="padding: 25px;">' +
+      '<div class="payment-methods" style="padding: 25px; background: white; width: 100%; box-sizing: border-box;">' +
           '<h3 style="margin-bottom: 20px; color: #333; text-align: center; font-size: 18px;">💳 Choose Payment Method / भुगतान विधि चुनें</h3>' +
           '<div class="payment-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">' +
               '<button onclick="showUPIAppsPayment()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; padding: 18px; border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;">' +
@@ -4630,7 +5076,7 @@ function showPaymentPage(order) {
 }
 // Make function globally accessible
 window.showPaymentPage = showPaymentPage;
-function showCancelConfirmationPopup(onConfirm) {
+function showCancelConfirmationModal(onConfirm) {
   const confirmationModal = document.createElement('div');
   confirmationModal.id = 'cancelConfirmationModal';
   confirmationModal.style.cssText = `
@@ -4825,14 +5271,14 @@ function showCancelConfirmationPopup(onConfirm) {
       document.body.removeChild(confirmationModal);
     }
     document.body.style.overflow = 'auto';
-    
+
     // Close all payment related modals when cancellation is confirmed
     const paymentModal = document.getElementById('paymentModal');
     const upiAppsModal = document.getElementById('upiAppsModal');
     const qrCodeModal = document.getElementById('qrCodeModal');
     const upiIdModal = document.getElementById('upiIdModal');
     const creditCardModal = document.getElementById('creditCardModal');
-    
+
     if (paymentModal && paymentModal.parentElement) {
       document.body.removeChild(paymentModal);
     }
@@ -4848,11 +5294,11 @@ function showCancelConfirmationPopup(onConfirm) {
     if (creditCardModal && creditCardModal.parentElement) {
       document.body.removeChild(creditCardModal);
     }
-    
+
     // Navigate to dashboard home page
     showPage('dashboardHome');
     forceEnableScrolling();
-    
+
     onConfirm();
   };
 
@@ -4900,6 +5346,11 @@ function showNotification(message, type = 'info') {
   }, 3000);
 }
 function showUPIAppsModal(order) {
+  if (!order) {
+    console.error('Order object is required for showUPIAppsModal');
+    showNotification('Error: Order information missing', 'error');
+    return;
+  }
   const upiModal = document.createElement('div');
   upiModal.id = 'upiAppsModal';
   upiModal.style.cssText = `
@@ -5148,108 +5599,69 @@ function showUPIAppsModal(order) {
       </div>
   `;
   document.body.appendChild(upiModal);
-  timerInterval = setInterval(() => {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
-      const timerElement = document.getElementById('upiTimer');
-      if (timerElement) {
-          timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      }
-      if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          cancelTransaction();
-      }
-      timeLeft--;
-  }, 1000);
-  activeIntervals.push(timerInterval);
-  window.openUPIApp = function(app) {
-      const upiID = 'kavita.5049-49@waicici'; // Correct UPI ID from copy function
-      const amount = order.price.toFixed(2);
-      const note = `Payment for Order ${order.id} - India Social Panel`;
+    timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const timerElement = document.getElementById('upiTimer');
+        if (timerElement) {
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            cancelTransaction();
+        }
+        timeLeft--;
+    }, 1000);
 
-      let upiUrl = '';
+    // Yahan par galti thi, isko hum theek kar rahe hain
+    activeIntervals.add(timerInterval); 
 
-      // Generate app-specific UPI URLs for better compatibility
-      switch(app.toLowerCase()) {
-          case 'googlepay':
-              // Google Pay specific URL format
-              upiUrl = `tez://upi/pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              // Fallback to generic UPI URL if Google Pay not installed
-              const fallbackTimer = setTimeout(() => {
-                  window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              }, 1000);
-              activeTimers.add(fallbackTimer);
-              break;
+    window.openUPIApp = function(app) {
+        // Use our new generic UPI payment function
+        const amount = order.price.toFixed(2);
+        openGenericUPIPayment(amount);
 
-          case 'phonepe':
-              // PhonePe specific URL format
-              upiUrl = `phonepe://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              // Fallback to generic UPI URL
-              setTimeout(() => {
-                  window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              }, 1000);
-              break;
+        // Give user time to complete payment then return to dashboard
+        setTimeout(() => {
+            clearInterval(timerInterval);
+            closeUPIModal();
+            showPage('dashboardHome');
+        }, 5000); // Increased time to 5 seconds for better user experience
+    };
 
-          case 'paytm':
-              // Paytm specific URL format
-              upiUrl = `paytmmp://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              // Fallback to generic UPI URL
-              setTimeout(() => {
-                  window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              }, 1000);
-              break;
+    window.cancelTransaction = function() {
+        showCancelConfirmationPopup(() => {
+            clearInterval(timerInterval);
+            closeUPIModal();
+            // Close payment modal completely and return to home
+            const paymentModal = document.getElementById('paymentModal');
+            if (paymentModal && paymentModal.parentElement) {
+                document.body.removeChild(paymentModal);
+            }
+            // Return to dashboard home page
+            showPage('dashboardHome');
+            if (paymentModal && paymentModal.parentElement) {
+                document.body.removeChild(paymentModal);
+            }
+            document.body.style.overflow = 'auto';
+            showNotification('❌ Transaction cancelled successfully!', 'info');
+            showPage('dashboardHome');
+        });
+    };
 
-          case 'other':
-          default:
-              // Generic UPI URL that works with all UPI apps
-              upiUrl = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-              break;
-      }
-
-      // Try to open the app-specific URL first
-      try {
-          window.location.href = upiUrl;
-          showNotification(`✅ Opening ${app.toUpperCase()}... Amount ₹${amount} pre-filled`, 'success');
-      } catch (error) {
-          // If app-specific URL fails, try generic UPI URL
-          window.location.href = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-          showNotification(`✅ Opening UPI App... Amount ₹${amount} pre-filled`, 'success');
-      }
-
-      // Give user time to complete payment then return to dashboard
-      setTimeout(() => {
-          clearInterval(timerInterval);
-          closeUPIModal();
-          showPage('dashboardHome');
-      }, 5000); // Increased time to 5 seconds for better user experience
-  };
-  window.cancelTransaction = function() {
-      showCancelConfirmationPopup(() => {
-          clearInterval(timerInterval);
-          closeUPIModal();
-          // Close payment modal completely and return to home
-          const paymentModal = document.getElementById('paymentModal');
-          if (paymentModal && paymentModal.parentElement) {
-              document.body.removeChild(paymentModal);
-          }
-          // Return to dashboard home page
-          showPage('dashboardHome');
-          if (paymentModal && paymentModal.parentElement) {
-              document.body.removeChild(paymentModal);
-          }
-          document.body.style.overflow = 'auto';
-          showNotification('❌ Transaction cancelled successfully!', 'info');
-          showPage('dashboardHome');
-      });
-  };
-  window.closeUPIModal = function() {
-      clearInterval(timerInterval);
-      if (upiModal && upiModal.parentElement) {
-          document.body.removeChild(upiModal);
-      }
-  };
+    window.closeUPIModal = function() {
+        clearInterval(timerInterval);
+        if (upiModal && upiModal.parentElement) {
+            document.body.removeChild(upiModal);
+        }
+    };
 }
 function showQRCodeModal(order) {
+  if (!order) {
+    console.error('Order object is required for showQRCodeModal');
+    showNotification('Error: Order information missing', 'error');
+    return;
+  }
   const qrModal = document.createElement('div');
   qrModal.id = 'qrCodeModal';
   qrModal.style.cssText = `
@@ -5491,36 +5903,42 @@ function showQRCodeModal(order) {
       }
       timeLeft--;
   }, 1000);
-  window.generateActualQRCode = function() {
-      const qrContainer = document.getElementById('qrCodeContainer');
-      const generateBtn = document.getElementById('generateQRBtn');
-      if (qrContainer && generateBtn) {
-          const upiID = 'kavita.5049-49@waicici';
-          const amount = order.price.toFixed(2);
-          const note = `Order ${order.id} - India Social Panel`;
-          const upiString = `upi://pay?pa=${upiID}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-          generateBtn.style.display = 'none';
-          qrContainer.innerHTML = `
-              <div style="
-                  width: 100%;
-                  height: 100%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  background: white;
-                  border-radius: 8px;
-                  border: 1px solid #dee2e6;
-              ">
-                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiString)}" 
-                  style="
-                      width: 220px; 
-                      height: 220px; 
-                      border-radius: 4px;
-                  " 
-                  alt="UPI QR Code" />
-              </div>
-          `;
-      }
+window.generateActualQRCode = function() {
+    const qrContainer = document.getElementById('qrCodeContainer');
+    const generateBtn = document.getElementById('generateQRBtn');
+
+    // Amount ko input field se liya ja raha hai
+    const amount = document.getElementById('addFundsAmountInput')?.value || document.getElementById('amountInput')?.value || '0';
+    const amountInINR = currentCurrency !== 'inr' ? Math.round(parseFloat(amount) / CURRENCY_RATES[currentCurrency].rate) : parseFloat(amount);
+
+    if (qrContainer && generateBtn) {
+        const upiID = UPI_CONFIG.upiID;
+
+        // upiString se pn= (payee name) hata diya gaya hai
+        const upiString = `upi://pay?pa=${upiID}&am=${amountInINR}&cu=INR`;
+
+        generateBtn.style.display = 'none';
+        qrContainer.innerHTML = `
+            <div style="
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border-radius: 8px;
+                border: 1px solid #dee2e6;
+            ">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiString)}" 
+                style="
+                    width: 220px; 
+                    height: 220px; 
+                    border-radius: 4px;
+                " 
+                alt="UPI QR Code" />
+            </div>
+        `;
+    }
       showNotification('QR Code generated successfully! Scan with any UPI app to pay.', 'success');
   };
   window.cancelQRTransaction = function() {
@@ -5545,6 +5963,11 @@ function showQRCodeModal(order) {
   };
 }
 function showUPIIDModal(order) {
+  if (!order) {
+    console.error('Order object is required for showUPIIDModal');
+    showNotification('Error: Order information missing', 'error');
+    return;
+  }
   const upiIDModal = document.createElement('div');
   upiIDModal.id = 'upiIDModal';
   upiIDModal.style.cssText = `
@@ -5559,8 +5982,8 @@ function showUPIIDModal(order) {
       animation: fadeIn 0.3s ease;
   `;
   let timerInterval;
-  let timeLeft = 900; // 15 minutes
-  const actualUPIID = 'kavita.5049-49@waicici'; // Real UPI ID for copying - consistent with app opening
+  let timeLeft = 1300; // 20 minutes
+  const actualUPIID = 'aryankumar0012u@ybl'; // Real UPI ID for copying - consistent with app opening
   const brandedDisplayUPIID = 'India Social Panel@paytm'; // Branded display UPI ID
   upiIDModal.innerHTML = `
       <div style="
@@ -5815,6 +6238,11 @@ function showUPIIDModal(order) {
   };
 }
 function showCardBankingModal(order) {
+  if (!order) {
+    console.error('Order object is required for showCardBankingModal');
+    showNotification('Error: Order information missing', 'error');
+    return;
+  }
   const cardModal = document.createElement('div');
   cardModal.id = 'cardBankingModal';
   cardModal.style.cssText = `
@@ -6099,7 +6527,7 @@ function showCardBankingModal(order) {
   };
 }
 function showPaymentConfirmation(order) {
-  // Payment confirmation popup removed - just close payment modal and go to dashboard
+
   const paymentModal = document.getElementById('paymentModal');
   if (paymentModal && paymentModal.parentElement) {
       document.body.removeChild(paymentModal);
@@ -6132,6 +6560,7 @@ function setupProfileFunctionality() {
       if (userAvatar) userAvatar.textContent = savedName.charAt(0).toUpperCase();
   }
   updateProfileStats();
+  initialize2FAStatus();
 
   // Name input functionality
   const nameInput = document.querySelector('input[placeholder="Enter your full name"]');
@@ -6448,6 +6877,13 @@ function savePreferences() {
 }
 
 function enable2FA() {
+  // Check if 2FA is already enabled
+  const is2FAEnabled = localStorage.getItem('indiasp_2fa_enabled') === 'true';
+  if (is2FAEnabled) {
+      showNotification('🔐 Two-Factor Authentication is already enabled!', 'info');
+      return;
+  }
+
   const enable2FAModal = document.createElement('div');
   enable2FAModal.style.cssText = `
       position: fixed;
@@ -6492,13 +6928,42 @@ function enable2FA() {
           </p>
 
           <div style="margin-bottom: 25px;">
-              <input type="tel" placeholder="Enter your mobile number" style="
-                  width: 100%;
-                  padding: 12px;
-                  border: 2px solid #e9ecef;
-                  border-radius: 8px;
+              <div style="
+                  display: flex;
+                  gap: 10px;
                   margin-bottom: 15px;
               ">
+                  <select id="countryCode" style="
+                      padding: 12px;
+                      border: 2px solid #e9ecef;
+                      border-radius: 8px;
+                      background: white;
+                      min-width: 80px;
+                  ">
+                      <option value="+91" selected>🇮🇳 +91</option>
+                  </select>
+                  <input 
+                      type="tel" 
+                      id="mobileNumber" 
+                      placeholder="Enter 10-digit mobile number" 
+                      maxlength="10"
+                      style="
+                          flex: 1;
+                          padding: 12px;
+                          border: 2px solid #e9ecef;
+                          border-radius: 8px;
+                      "
+                      oninput="validateMobileNumber(this)"
+                      onkeypress="restrictToNumbers(event)"
+                  >
+              </div>
+              <div id="mobileError" style="
+                  color: #dc3545;
+                  font-size: 14px;
+                  text-align: left;
+                  display: none;
+                  margin-top: 5px;
+              "></div>
               <button onclick="send2FACode()" style="
                   width: 100%;
                   background: #28a745;
@@ -6535,22 +7000,155 @@ function enable2FA() {
   };
 
   window.send2FACode = function() {
-      const mobile = enable2FAModal.querySelector('input[type="tel"]').value;
-      if (mobile && mobile.length >= 10) {
-          showNotification('📱 Verification code sent to your mobile!', 'success');
-          close2FAModal();
+      const mobileInput = enable2FAModal.querySelector('#mobileNumber');
+      const countryCode = enable2FAModal.querySelector('#countryCode');
+      const mobile = mobileInput ? mobileInput.value.trim() : '';
+      
+      if (mobile && mobile.length === 10 && /^[0-9]{10}$/.test(mobile)) {
+          const fullNumber = countryCode.value + mobile;
+          showNotification(`📱 Verification code sent to ${fullNumber}!`, 'success');
+          
+          // Mark 2FA as enabled
+          localStorage.setItem('indiasp_2fa_enabled', 'true');
+          localStorage.setItem('indiasp_2fa_number', fullNumber);
+          
+          // Close modal
+          document.body.removeChild(enable2FAModal);
 
-          // Update 2FA status in UI
+          // Update 2FA status in UI and replace enable button with disable button
           const unverifiedBadge = document.querySelector('.unverified-badge');
+          const enable2FABtn = document.querySelector('.enable-2fa-btn');
+          
           if (unverifiedBadge) {
               unverifiedBadge.className = 'verification-badge';
               unverifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enabled';
           }
+          
+          if (enable2FABtn) {
+              enable2FABtn.textContent = 'Disable 2FA';
+              enable2FABtn.className = 'disable-2fa-btn';
+              enable2FABtn.style.background = '#dc3545';
+              enable2FABtn.onclick = function() { disable2FA(); };
+          }
+          
+          showNotification('🔐 Two-Factor Authentication enabled successfully!', 'success');
       } else {
-          showNotification('❌ Please enter a valid mobile number!', 'error');
+          showMobileError('❌ कृपया 10 अंकों का वैध भारतीय मोबाइल नंबर दर्ज करें! / Please enter a valid 10-digit Indian mobile number!');
       }
   };
+
+  // Helper function to show mobile error
+  window.showMobileError = function(message) {
+      const errorDiv = enable2FAModal.querySelector('#mobileError');
+      if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+          
+          setTimeout(() => {
+              errorDiv.style.display = 'none';
+          }, 5000);
+      }
+  };
+
+  // Mobile number validation function
+  window.validateMobileNumber = function(input) {
+      const value = input.value.replace(/[^0-9]/g, '');
+      input.value = value;
+      
+      const errorDiv = enable2FAModal.querySelector('#mobileError');
+      
+      if (value.length > 10) {
+          input.value = value.substring(0, 10);
+          showMobileError('❌ मोबाइल नंबर 10 अंकों से ज्यादा नहीं हो सकता / Mobile number cannot be more than 10 digits');
+      } else if (value.length < 10 && value.length > 0) {
+          showMobileError('❌ मोबाइल नंबर 10 अंकों का होना चाहिए / Mobile number must be 10 digits');
+      } else if (value.length === 10) {
+          if (errorDiv) errorDiv.style.display = 'none';
+      }
+  };
+
+  // Restrict input to numbers only
+  window.restrictToNumbers = function(event) {
+      const charCode = event.which ? event.which : event.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+          event.preventDefault();
+          return false;
+      }
+      return true;
+  };
 }
+
+// Disable 2FA function
+function disable2FA() {
+  const confirmDisable = confirm('⚠️ Are you sure you want to disable Two-Factor Authentication?\n\nयह आपके खाते की सुरक्षा कम कर देगा।\nThis will reduce your account security.');
+  
+  if (confirmDisable) {
+      // Remove 2FA from localStorage
+      localStorage.removeItem('indiasp_2fa_enabled');
+      localStorage.removeItem('indiasp_2fa_number');
+      
+      // Update UI back to unverified state
+      const verifiedBadge = document.querySelector('.verification-badge');
+      if (verifiedBadge) {
+          verifiedBadge.className = 'unverified-badge';
+          verifiedBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Not Enabled';
+      }
+      
+      // Change disable button back to enable button
+      const disable2FABtn = document.querySelector('.disable-2fa-btn');
+      if (disable2FABtn) {
+          disable2FABtn.textContent = 'Enable 2FA';
+          disable2FABtn.className = 'enable-2fa-btn';
+          disable2FABtn.style.background = '#28a745';
+          disable2FABtn.onclick = function() { enable2FA(); };
+      }
+      
+      // Hide number display if exists
+      const tfaNumberDisplay = document.querySelector('.tfa-number-display');
+      if (tfaNumberDisplay) {
+          tfaNumberDisplay.style.display = 'none';
+      }
+      
+      showNotification('🔓 Two-Factor Authentication has been disabled!', 'warning');
+  }
+}
+
+// Make disable2FA globally accessible
+window.disable2FA = disable2FA;
+
+// Initialize 2FA status on page load
+function initialize2FAStatus() {
+  const is2FAEnabled = localStorage.getItem('indiasp_2fa_enabled') === 'true';
+  const savedNumber = localStorage.getItem('indiasp_2fa_number');
+  
+  if (is2FAEnabled) {
+      // Update 2FA status badge
+      const unverifiedBadge = document.querySelector('.unverified-badge');
+      if (unverifiedBadge) {
+          unverifiedBadge.className = 'verification-badge';
+          unverifiedBadge.innerHTML = '<i class="fas fa-check-circle"></i> Enabled';
+      }
+      
+      // Change enable button to disable button
+      const enable2FABtn = document.querySelector('.enable-2fa-btn');
+      if (enable2FABtn) {
+          enable2FABtn.textContent = 'Disable 2FA';
+          enable2FABtn.className = 'disable-2fa-btn';
+          enable2FABtn.style.background = '#dc3545';
+          enable2FABtn.onclick = function() { disable2FA(); };
+      }
+      
+      // Show saved number if available
+      if (savedNumber) {
+          const tfaNumberDisplay = document.querySelector('.tfa-number-display');
+          if (tfaNumberDisplay) {
+              tfaNumberDisplay.textContent = `Linked to: ${savedNumber}`;
+              tfaNumberDisplay.style.display = 'block';
+          }
+      }
+  }
+}
+
 function loadUserPaymentMethods() {
   const paymentMethodsList = document.getElementById('paymentMethodsList');
   if (!paymentMethodsList) return;
@@ -6741,7 +7339,7 @@ function showUPIOptions() {
     if (upiAppsGrid) {
         const isVisible = upiAppsGrid.style.display !== 'none';
         upiAppsGrid.style.display = isVisible ? 'none' : 'block';
-        
+
         if (!isVisible) {
             // Scroll into view
             upiAppsGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -6750,49 +7348,16 @@ function showUPIOptions() {
 }
 
 function openUPIApp(appName) {
-    const amount = document.getElementById('amountInput')?.value || '0';
+    const amount = document.getElementById('addFundsAmountInput')?.value || document.getElementById('amountInput')?.value || '0';
     const amountInINR = currentCurrency !== 'inr' ? Math.round(parseFloat(amount) / CURRENCY_RATES[currentCurrency].rate) : parseFloat(amount);
-    
-    // UPI ID - using the embedded Kavita UPI ID
-    const upiId = 'kavita.5049-49@waicici';
-    const merchantName = 'India Social Panel';
-    
-    // UPI URL format: upi://pay?pa=UPI_ID&pn=MERCHANT_NAME&am=AMOUNT&cu=INR&tn=TRANSACTION_NOTE
-    const transactionNote = `Add Funds - India Social Panel`;
-    
-    const upiUrls = {
-        'gpay': `tez://upi/pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
-        'phonepe': `phonepe://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
-        'paytm': `paytmmp://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
-        'bhim': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
-        'amazonpay': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`,
-        'whatsapp': `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`
-    };
-    
-    const fallbackUrl = `upi://pay?pa=${upiId}&pn=${merchantName}&am=${amountInINR}&cu=INR&tn=${transactionNote}`;
-    
+
     if (amountInINR < 1) {
         showNotification('Please enter a valid amount to proceed with payment', 'error');
         return;
     }
-    
-    // Attempt to open the specific UPI app
-    const upiUrl = upiUrls[appName] || fallbackUrl;
-    
-    // For mobile devices, try to open the UPI app
-    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        window.location.href = upiUrl;
-        
-        // Fallback notification
-        safeSetTimeout(() => {
-            showNotification(`Opening ${getAppDisplayName(appName)}... If the app doesn't open, please ensure it's installed on your device.`, 'info');
-        }, 1000);
-    } else {
-        // For desktop, show QR code or instructions
-        showQRCodeForUPI(upiId, amountInINR, appName);
-    }
-    
-    showNotification(`Initiating payment of ₹${amountInINR} via ${getAppDisplayName(appName)}`, 'success');
+
+    // Use our new generic UPI payment function
+    openGenericUPIPayment(amountInINR);
 }
 
 function getAppDisplayName(appName) {
@@ -6814,7 +7379,7 @@ function showQRCodeForUPI(upiId, amount, appName) {
         UPI Payment Details:
         UPI ID: ${upiId}
         Amount: ₹${amount}
-        
+
         Scan QR code with ${getAppDisplayName(appName)} or any UPI app to pay.
     `;
     showNotification(message, 'info');
@@ -6824,20 +7389,20 @@ function showQRCodeForUPI(upiId, amount, appName) {
 function initializeAllEnhancements() {
     // Initialize first visit tracking
     initializeFirstVisitTracking();
-    
+
     // Initialize currency system
     initializeCurrencySystem();
-    
+
     // Update price displays
     updateAllPricesDisplay();
-    
+
     console.log('🚀 All enhancement features initialized successfully!');
 }
 
 // Enhanced DOMContentLoaded Event - Include new initializations
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 India Social Panel - Ultra-fast initialization starting...');
-    
+
     // Start performance monitoring immediately
     startPerformanceMonitoring();
 
@@ -6866,7 +7431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Final batch - less critical items
             requestAnimationFrame(() => {
-                initializeEmailJS();
+
                 initializeAIChatListeners();
                 setupProfileFunctionality();
 
